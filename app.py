@@ -36,11 +36,15 @@ import random
 # ── 1. APP CONFIGURATION ──────────────────────────────────────────────────────
 app = Flask(__name__)
 
-# Secret key encrypts the session cookie (change this in production!)
-app.config['SECRET_KEY'] = 'fintrack-super-secret-2024-change-me'
+# Secret key encrypts the session cookie (use environment variable in production!)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fintrack-super-secret-2024-change-me')
 
-# SQLite database will be created as "finance.db" in the same folder
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///finance.db'
+# Database configuration - uses SQLite by default, can be overridden with DATABASE_URL
+database_url = os.environ.get('DATABASE_URL', 'sqlite:///finance.db')
+# Fix for Render PostgreSQL (if you ever switch from SQLite)
+if database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Allow JavaScript from any origin to call our API (needed for Netlify ↔ backend)
@@ -453,11 +457,36 @@ def get_analytics():
     }), 200
 
 
-# ── 6. ENTRY POINT ────────────────────────────────────────────────────────────
+# ── 6. ROOT ROUTE (Fixes Render 404) ─────────────────────────────────────────
+
+@app.route('/')
+def home():
+    """Returns API status - prevents Render from returning 404 on health check."""
+    return jsonify({
+        "status": "success",
+        "message": "FinTrack API is running",
+        "version": "1.0.0",
+        "endpoints": [
+            "/api/signup",
+            "/api/login",
+            "/api/logout",
+            "/api/me",
+            "/api/income",
+            "/api/expenditure",
+            "/api/investments",
+            "/api/analytics"
+        ]
+    })
+
+
+# ── 7. ENTRY POINT (Fixed for Production) ─────────────────────────────────────
 
 if __name__ == '__main__':
     init_db()
-    print('\n🚀  Starting FinTrack API server...')
-    print('   Open your browser and go to: http://127.0.0.1:5000')
-    print('   API base URL: http://127.0.0.1:5000/api\n')
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    print(f'\n🚀  Starting FinTrack API server on port {port}...')
+    print('   API base URL: http://0.0.0.0:' + str(port) + '/api')
+    print('   Health check: http://0.0.0.0:' + str(port) + '/')
+    # Use host='0.0.0.0' to accept connections from outside (required for Render)
+    # Use debug=False for production
+    app.run(host='0.0.0.0', port=port, debug=False)
