@@ -4,509 +4,365 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FinTrack Pro — Personal Finance Intelligence</title>
-  <link rel="stylesheet" href="style.css" />
-  <!-- Chart.js for all graphs -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-  <!-- Lucide icons via CDN (lightweight SVG icon set) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+  <style>
+    /* ═══════════════════════════════════════════════════════════════════
+       FINTRACK PRO — Complete CSS
+       Dark/Light mode | Responsive | No external dependencies except Chart.js & Lucide
+    ════════════════════════════════════════════════════════════════════ */
+    :root {
+      --accent: #6C63FF; --accent-2: #3ECFCF; --income-clr: #22c55e;
+      --expense-clr: #ef4444; --invest-clr: #3b82f6; --savings-clr: #f59e0b;
+      --networth-clr: #8b5cf6; --rate-clr: #06b6d4; --sidebar-w: 240px;
+      --topbar-h: 64px; --radius: 14px; --radius-sm: 8px;
+      --font: 'Segoe UI', system-ui, -apple-system, sans-serif; --transition: 0.22s ease;
+    }
+    [data-theme="dark"] { --bg: #0f1117; --bg-2: #1a1d27; --bg-3: #22263a; --border: rgba(255,255,255,0.07); --text-primary: #f0f2ff; --text-muted: #8892b0; --shadow: 0 4px 24px rgba(0,0,0,0.4); --chart-grid: rgba(255,255,255,0.05); }
+    [data-theme="light"] { --bg: #f5f6fb; --bg-2: #ffffff; --bg-3: #eef0f8; --border: rgba(0,0,0,0.07); --text-primary: #1a1d2e; --text-muted: #6b7280; --shadow: 0 4px 24px rgba(0,0,0,0.08); --chart-grid: rgba(0,0,0,0.06); }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text-primary); transition: background var(--transition), color var(--transition); min-height: 100vh; overflow-x: hidden; }
+    a, button { cursor: pointer; font-family: var(--font); border: none; outline: none; background: none; }
+    .hidden { display: none !important; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+    /* Auth Screen */
+    .auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; background: var(--bg); }
+    .auth-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; width: 100%; max-width: 400px; text-align: center; box-shadow: var(--shadow); }
+    .btn-primary { width: 100%; padding: 0.78rem; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white; font-weight: 600; border-radius: var(--radius-sm); margin-top: 1rem; transition: opacity 0.2s; }
+    .btn-primary:hover { opacity: 0.9; }
+
+    /* Main App Layout */
+    #app { display: flex; height: 100vh; overflow: hidden; }
+    .sidebar { width: var(--sidebar-w); height: 100vh; background: var(--bg-2); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; transition: transform var(--transition); z-index: 100; }
+    .sidebar-brand { display: flex; align-items: center; gap: 0.75rem; padding: 1.25rem; border-bottom: 1px solid var(--border); height: var(--topbar-h); font-weight: 700; font-size: 1.2rem; }
+    .sidebar-nav { flex: 1; padding: 1rem 0.75rem; display: flex; flex-direction: column; gap: 0.25rem; }
+    .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0.875rem; border-radius: var(--radius-sm); color: var(--text-muted); text-decoration: none; transition: all 0.2s; cursor: pointer; }
+    .nav-item:hover, .nav-item.active { background: rgba(108,99,255,0.15); color: var(--accent); font-weight: 600; }
+    .sidebar-footer { padding: 1rem; border-top: 1px solid var(--border); }
+    .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .topbar { height: var(--topbar-h); background: var(--bg-2); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.5rem; gap: 1rem; flex-shrink: 0; }
+    .topbar-title { font-size: 1.2rem; font-weight: 700; flex: 1; }
+    .hamburger { display: none; font-size: 1.5rem; color: var(--text-muted); background: none; }
+    .page { display: none; flex: 1; overflow-y: auto; padding: 2rem; animation: fadeIn 0.3s ease; }
+    .page.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .page-header { margin-bottom: 1.75rem; }
+    .page-header h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .page-header p { color: var(--text-muted); }
+
+    /* KPI Cards */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.75rem; }
+    .kpi-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: var(--shadow); border-left: 3px solid transparent; }
+    .kpi-card.income { border-left-color: var(--income-clr); }
+    .kpi-card.expense { border-left-color: var(--expense-clr); }
+    .kpi-card.investment { border-left-color: var(--invest-clr); }
+    .kpi-card.savings { border-left-color: var(--savings-clr); }
+    .kpi-card.networth { border-left-color: var(--networth-clr); }
+    .kpi-card.rate { border-left-color: var(--rate-clr); }
+    .kpi-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    .kpi-value { font-size: 1.3rem; font-weight: 700; margin-top: 0.2rem; }
+
+    /* Charts & Tables */
+    .charts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.75rem; }
+    .chart-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; box-shadow: var(--shadow); }
+    .chart-card.wide { grid-column: span 1; }
+    .table-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; overflow-x: auto; margin-bottom: 1.5rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    th { text-align: left; padding: 0.75rem; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+    td { padding: 0.75rem; border-bottom: 1px solid var(--border); }
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.72rem; font-weight: 600; }
+    .badge-green { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .badge-red { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .badge-blue { background: rgba(59,130,246,0.15); color: #3b82f6; }
+    .badge-amber { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .text-green { color: #22c55e; }
+    .text-red { color: #ef4444; }
+
+    @media (max-width: 900px) {
+      .sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); z-index: 200; }
+      .sidebar.open { transform: translateX(0); box-shadow: 4px 0 32px rgba(0,0,0,0.3); }
+      .hamburger { display: block; }
+      .charts-grid { grid-template-columns: 1fr; }
+      .page { padding: 1rem; }
+    }
+    @media (max-width: 540px) { .kpi-grid { grid-template-columns: 1fr; } }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════════════════════════
-     AUTH SCREEN  (login + signup — toggled by JS)
-═══════════════════════════════════════════════════════════════════════════ -->
+<!-- AUTH SCREEN (Demo auto-login) -->
 <div id="auth-screen" class="auth-screen">
-  <div class="auth-brand">
-    <div class="auth-logo">
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-        <rect width="40" height="40" rx="10" fill="url(#lg)"/>
-        <path d="M10 28L20 12L30 28" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="20" cy="22" r="3" fill="white"/>
-        <defs><linearGradient id="lg" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#6C63FF"/><stop offset="1" stop-color="#3ECFCF"/>
-        </linearGradient></defs>
-      </svg>
-    </div>
-    <div>
-      <h1 class="auth-brand-name">FinTrack Pro</h1>
-      <p class="auth-brand-tagline">Personal Finance Intelligence</p>
-    </div>
-  </div>
-
-  <!-- LOGIN PANEL -->
-  <div id="login-panel" class="auth-card">
-    <h2 class="auth-title">Welcome back</h2>
-    <p class="auth-subtitle">Sign in to your financial dashboard</p>
-    <div class="auth-demo-hint">
-      Demo: <strong>demo@fintrack.com</strong> / <strong>Demo@1234</strong>
-    </div>
-    <div id="login-error" class="auth-error hidden"></div>
-    <div class="form-group">
-      <label>Email Address</label>
-      <input type="email" id="login-email" placeholder="you@example.com" />
-    </div>
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" id="login-password" placeholder="••••••••" />
-    </div>
-    <button class="btn-primary" id="login-btn" onclick="handleLogin()">Sign In</button>
-    <p class="auth-switch">Don't have an account? <a onclick="showSignup()">Create one</a></p>
-  </div>
-
-  <!-- SIGNUP PANEL -->
-  <div id="signup-panel" class="auth-card hidden">
-    <h2 class="auth-title">Create account</h2>
-    <p class="auth-subtitle">Start tracking your financial journey</p>
-    <div id="signup-error" class="auth-error hidden"></div>
-    <div class="form-group">
-      <label>Full Name</label>
-      <input type="text" id="signup-name" placeholder="Arjun Sharma" />
-    </div>
-    <div class="form-group">
-      <label>Email Address</label>
-      <input type="email" id="signup-email" placeholder="you@example.com" />
-    </div>
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" id="signup-password" placeholder="Min. 6 characters" />
-    </div>
-    <div class="form-group">
-      <label>Confirm Password</label>
-      <input type="password" id="signup-confirm" placeholder="Repeat password" />
-    </div>
-    <button class="btn-primary" id="signup-btn" onclick="handleSignup()">Create Account</button>
-    <p class="auth-switch">Already have an account? <a onclick="showLogin()">Sign in</a></p>
+  <div class="auth-card">
+    <h2>📊 FinTrack Pro</h2>
+    <p style="margin: 0.5rem 0 1rem;">Personal Finance Intelligence</p>
+    <button class="btn-primary" id="demo-login-btn">✨ Launch Dashboard ✨</button>
+    <p style="margin-top: 1rem; font-size: 0.8rem; opacity:0.7;">Preloaded with realistic 12‑month employee data</p>
   </div>
 </div>
 
-
-<!-- ═══════════════════════════════════════════════════════════════════════════
-     MAIN APP  (hidden until authenticated)
-═══════════════════════════════════════════════════════════════════════════ -->
+<!-- MAIN APP -->
 <div id="app" class="hidden">
-
-  <!-- SIDEBAR NAV -->
   <aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
-      <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
-        <rect width="40" height="40" rx="10" fill="url(#lg2)"/>
-        <path d="M10 28L20 12L30 28" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="20" cy="22" r="3" fill="white"/>
-        <defs><linearGradient id="lg2" x1="0" y1="0" x2="40" y2="40">
-          <stop stop-color="#6C63FF"/><stop offset="1" stop-color="#3ECFCF"/>
-        </linearGradient></defs>
-      </svg>
-      <span>FinTrack Pro</span>
-    </div>
-
+    <div class="sidebar-brand">📈 FinTrack Pro</div>
     <nav class="sidebar-nav">
-      <a class="nav-item active" onclick="navigate('dashboard')" data-page="dashboard">
-        <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
-      </a>
-      <a class="nav-item" onclick="navigate('income')" data-page="income">
-        <i data-lucide="trending-up"></i><span>Income</span>
-      </a>
-      <a class="nav-item" onclick="navigate('expenditure')" data-page="expenditure">
-        <i data-lucide="credit-card"></i><span>Expenditure</span>
-      </a>
-      <a class="nav-item" onclick="navigate('investments')" data-page="investments">
-        <i data-lucide="bar-chart-2"></i><span>Investments</span>
-      </a>
-      <a class="nav-item" onclick="navigate('analytics')" data-page="analytics">
-        <i data-lucide="pie-chart"></i><span>Analytics</span>
-      </a>
+      <a class="nav-item active" onclick="navigate('dashboard')" data-page="dashboard">📊 Dashboard</a>
+      <a class="nav-item" onclick="navigate('income')" data-page="income">💰 Income</a>
+      <a class="nav-item" onclick="navigate('expenditure')" data-page="expenditure">💳 Expenditure</a>
+      <a class="nav-item" onclick="navigate('investments')" data-page="investments">📈 Investments</a>
+      <a class="nav-item" onclick="navigate('analytics')" data-page="analytics">📉 Analytics</a>
     </nav>
-
     <div class="sidebar-footer">
-      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
-        <i data-lucide="sun" id="theme-icon-sun"></i>
-        <i data-lucide="moon" id="theme-icon-moon" class="hidden"></i>
-        <span id="theme-label">Light Mode</span>
-      </button>
-      <button class="btn-logout" onclick="handleLogout()">
-        <i data-lucide="log-out"></i><span>Logout</span>
-      </button>
+      <button onclick="handleLogout()" style="color: var(--text-muted); width:100%; text-align:left; padding:0.5rem;">🚪 Logout</button>
     </div>
   </aside>
 
-  <!-- MAIN CONTENT AREA -->
   <main class="main-content">
-
-    <!-- TOP BAR -->
     <header class="topbar">
-      <button class="hamburger" onclick="toggleSidebar()">
-        <i data-lucide="menu"></i>
-      </button>
+      <button class="hamburger" onclick="toggleSidebar()">☰</button>
       <div class="topbar-title" id="topbar-title">Dashboard</div>
-      <div class="topbar-right">
-        <div class="year-select-wrap">
-          <select id="year-select" onchange="onYearChange()">
-            <option value="2024" selected>FY 2024</option>
-            <option value="2023">FY 2023</option>
-          </select>
-        </div>
-        <div class="user-avatar" id="user-avatar">A</div>
-        <div class="user-name" id="user-name-display">Loading…</div>
-      </div>
     </header>
 
-    <!-- ── DASHBOARD PAGE ── -->
+    <!-- Dashboard Page -->
     <section id="page-dashboard" class="page active">
-      <div class="page-header">
-        <h2>Financial Overview</h2>
-        <p>Your complete financial snapshot at a glance</p>
-      </div>
-
-      <div class="kpi-grid" id="dash-kpis">
-        <div class="kpi-card income">
-          <div class="kpi-icon"><i data-lucide="trending-up"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Annual Income</div>
-            <div class="kpi-value" id="kpi-income">—</div>
-          </div>
-        </div>
-        <div class="kpi-card expense">
-          <div class="kpi-icon"><i data-lucide="credit-card"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Total Expenses</div>
-            <div class="kpi-value" id="kpi-expense">—</div>
-          </div>
-        </div>
-        <div class="kpi-card investment">
-          <div class="kpi-icon"><i data-lucide="bar-chart-2"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Investments</div>
-            <div class="kpi-value" id="kpi-invest">—</div>
-          </div>
-        </div>
-        <div class="kpi-card savings">
-          <div class="kpi-icon"><i data-lucide="piggy-bank"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Net Savings</div>
-            <div class="kpi-value" id="kpi-savings">—</div>
-          </div>
-        </div>
-        <div class="kpi-card networth">
-          <div class="kpi-icon"><i data-lucide="landmark"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Net Worth</div>
-            <div class="kpi-value" id="kpi-networth">—</div>
-          </div>
-        </div>
-        <div class="kpi-card rate">
-          <div class="kpi-icon"><i data-lucide="percent"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Savings Rate</div>
-            <div class="kpi-value" id="kpi-savingsrate">—</div>
-          </div>
-        </div>
-      </div>
-
+      <div class="page-header"><h2>Financial Overview</h2><p>Your complete financial snapshot at a glance</p></div>
+      <div class="kpi-grid" id="dash-kpis"></div>
       <div class="charts-grid">
-        <div class="chart-card wide">
-          <div class="chart-card-header">
-            <h3>Monthly Cash Flow</h3>
-            <span class="chart-legend">
-              <span class="dot green"></span>Income
-              <span class="dot red"></span>Expenses
-              <span class="dot blue"></span>Investments
-            </span>
-          </div>
-          <canvas id="dash-cashflow-chart" height="280"></canvas>
-        </div>
-        <div class="chart-card">
-          <div class="chart-card-header"><h3>Budget Allocation</h3></div>
-          <canvas id="dash-pie-chart" height="240"></canvas>
-        </div>
+        <div class="chart-card wide"><canvas id="dash-cashflow-chart" height="280"></canvas></div>
+        <div class="chart-card"><canvas id="dash-pie-chart" height="240"></canvas></div>
       </div>
     </section>
 
-    <!-- ── INCOME PAGE ── -->
+    <!-- Income Page -->
     <section id="page-income" class="page">
-      <div class="page-header">
-        <h2>Income Analysis</h2>
-        <p>12-month salary and income breakdown</p>
-      </div>
-
-      <div class="kpi-grid">
-        <div class="kpi-card income">
-          <div class="kpi-icon"><i data-lucide="wallet"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Annual Total</div>
-            <div class="kpi-value" id="inc-total">—</div>
-          </div>
-        </div>
-        <div class="kpi-card savings">
-          <div class="kpi-icon"><i data-lucide="calculator"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Monthly Average</div>
-            <div class="kpi-value" id="inc-avg">—</div>
-          </div>
-        </div>
-        <div class="kpi-card investment">
-          <div class="kpi-icon"><i data-lucide="arrow-up-circle"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Highest Month</div>
-            <div class="kpi-value" id="inc-high">—</div>
-          </div>
-        </div>
-        <div class="kpi-card expense">
-          <div class="kpi-icon"><i data-lucide="arrow-down-circle"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Lowest Month</div>
-            <div class="kpi-value" id="inc-low">—</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="charts-grid">
-        <div class="chart-card wide">
-          <div class="chart-card-header"><h3>Monthly Income Trend</h3></div>
-          <canvas id="income-trend-chart" height="260"></canvas>
-        </div>
-        <div class="chart-card">
-          <div class="chart-card-header"><h3>Growth Rate (%)</h3></div>
-          <canvas id="income-growth-chart" height="240"></canvas>
-        </div>
-      </div>
-
-      <div class="table-card">
-        <div class="chart-card-header"><h3>Monthly Income Ledger</h3></div>
-        <div class="table-wrap">
-          <table id="income-table">
-            <thead>
-              <tr>
-                <th>Month</th><th>Date</th><th>Source</th>
-                <th>Amount</th><th>Growth</th>
-              </tr>
-            </thead>
-            <tbody id="income-tbody"></tbody>
-          </table>
-        </div>
-      </div>
+      <div class="page-header"><h2>Income Analysis</h2><p>12-month salary and income breakdown</p></div>
+      <div class="kpi-grid" id="inc-kpis"></div>
+      <div class="charts-grid"><div class="chart-card"><canvas id="income-trend-chart" height="260"></canvas></div></div>
+      <div class="table-card"><h3 style="margin-bottom:1rem;">Monthly Income Ledger</h3><table><thead><tr><th>Month</th><th>Source</th><th>Amount</th><th>Growth</th></tr></thead><tbody id="income-tbody"></tbody></table></div>
     </section>
 
-    <!-- ── EXPENDITURE PAGE ── -->
+    <!-- Expenditure Page -->
     <section id="page-expenditure" class="page">
-      <div class="page-header">
-        <h2>Expenditure Tracker</h2>
-        <p>Detailed expense analysis by category and month</p>
-      </div>
-
-      <div class="kpi-grid">
-        <div class="kpi-card expense">
-          <div class="kpi-icon"><i data-lucide="receipt"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Annual Expenses</div>
-            <div class="kpi-value" id="exp-total">—</div>
-          </div>
-        </div>
-        <div class="kpi-card income">
-          <div class="kpi-icon"><i data-lucide="percent"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Expense Ratio</div>
-            <div class="kpi-value" id="exp-ratio">—</div>
-          </div>
-        </div>
-        <div class="kpi-card savings">
-          <div class="kpi-icon"><i data-lucide="tag"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Top Category</div>
-            <div class="kpi-value" id="exp-top-cat">—</div>
-          </div>
-        </div>
-        <div class="kpi-card networth">
-          <div class="kpi-icon"><i data-lucide="list"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Categories</div>
-            <div class="kpi-value" id="exp-cat-count">—</div>
-          </div>
-        </div>
-      </div>
-
+      <div class="page-header"><h2>Expenditure Tracker</h2><p>Detailed expense analysis by category</p></div>
+      <div class="kpi-grid" id="exp-kpis"></div>
       <div class="charts-grid">
-        <div class="chart-card">
-          <div class="chart-card-header"><h3>Expense Distribution</h3></div>
-          <canvas id="exp-pie-chart" height="260"></canvas>
-        </div>
-        <div class="chart-card wide">
-          <div class="chart-card-header"><h3>Monthly Spending Trend</h3></div>
-          <canvas id="exp-trend-chart" height="260"></canvas>
-        </div>
+        <div class="chart-card"><canvas id="exp-pie-chart" height="260"></canvas></div>
+        <div class="chart-card"><canvas id="exp-trend-chart" height="260"></canvas></div>
       </div>
-
-      <div class="table-card">
-        <div class="chart-card-header"><h3>Expense by Category</h3></div>
-        <div class="table-wrap">
-          <table id="exp-table">
-            <thead>
-              <tr>
-                <th>Category</th><th>Annual Total</th><th>Share</th><th>Avg / Month</th>
-              </tr>
-            </thead>
-            <tbody id="exp-tbody"></tbody>
-          </table>
-        </div>
-      </div>
+      <div class="table-card"><h3>Expense by Category</h3><table><thead><tr><th>Category</th><th>Annual Total</th><th>Share</th></tr></thead><tbody id="exp-tbody"></tbody></table></div>
     </section>
 
-    <!-- ── INVESTMENTS PAGE ── -->
+    <!-- Investments Page -->
     <section id="page-investments" class="page">
-      <div class="page-header">
-        <h2>Investment Portfolio</h2>
-        <p>Complete investment performance and allocation</p>
-      </div>
-
-      <div class="kpi-grid">
-        <div class="kpi-card investment">
-          <div class="kpi-icon"><i data-lucide="dollar-sign"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Total Invested</div>
-            <div class="kpi-value" id="inv-invested">—</div>
-          </div>
-        </div>
-        <div class="kpi-card income">
-          <div class="kpi-icon"><i data-lucide="activity"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Current Value</div>
-            <div class="kpi-value" id="inv-current">—</div>
-          </div>
-        </div>
-        <div class="kpi-card savings">
-          <div class="kpi-icon"><i data-lucide="trending-up"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Total Returns</div>
-            <div class="kpi-value" id="inv-profit">—</div>
-          </div>
-        </div>
-        <div class="kpi-card rate">
-          <div class="kpi-icon"><i data-lucide="percent"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Return Rate</div>
-            <div class="kpi-value" id="inv-return-pct">—</div>
-          </div>
-        </div>
-      </div>
-
+      <div class="page-header"><h2>Investment Portfolio</h2><p>Complete performance & allocation</p></div>
+      <div class="kpi-grid" id="inv-kpis"></div>
       <div class="charts-grid">
-        <div class="chart-card">
-          <div class="chart-card-header"><h3>Portfolio Allocation</h3></div>
-          <canvas id="inv-pie-chart" height="260"></canvas>
-        </div>
-        <div class="chart-card wide">
-          <div class="chart-card-header"><h3>Monthly Investment Flow</h3></div>
-          <canvas id="inv-bar-chart" height="260"></canvas>
-        </div>
+        <div class="chart-card"><canvas id="inv-pie-chart" height="260"></canvas></div>
+        <div class="chart-card"><canvas id="inv-bar-chart" height="260"></canvas></div>
       </div>
-
-      <div class="table-card">
-        <div class="chart-card-header"><h3>Investment Holdings</h3></div>
-        <div class="table-wrap">
-          <table id="inv-table">
-            <thead>
-              <tr>
-                <th>Name</th><th>Type</th><th>Date</th>
-                <th>Invested</th><th>Current</th><th>P&L</th><th>Return</th>
-              </tr>
-            </thead>
-            <tbody id="inv-tbody"></tbody>
-          </table>
-        </div>
-      </div>
+      <div class="table-card"><h3>Investment Holdings</h3><table><thead><tr><th>Name</th><th>Type</th><th>Invested</th><th>Current</th><th>Return</th></tr></thead><tbody id="inv-tbody"></tbody></table></div>
     </section>
 
-    <!-- ── ANALYTICS PAGE ── -->
+    <!-- Analytics Page -->
     <section id="page-analytics" class="page">
-      <div class="page-header">
-        <h2>Executive Analytics</h2>
-        <p>Comprehensive financial intelligence dashboard</p>
-      </div>
-
-      <div class="kpi-grid">
-        <div class="kpi-card income">
-          <div class="kpi-icon"><i data-lucide="trending-up"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Income</div>
-            <div class="kpi-value" id="an-income">—</div>
-          </div>
-        </div>
-        <div class="kpi-card expense">
-          <div class="kpi-icon"><i data-lucide="credit-card"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Expenses</div>
-            <div class="kpi-value" id="an-expense">—</div>
-          </div>
-        </div>
-        <div class="kpi-card investment">
-          <div class="kpi-icon"><i data-lucide="bar-chart-2"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Invested</div>
-            <div class="kpi-value" id="an-invested">—</div>
-          </div>
-        </div>
-        <div class="kpi-card savings">
-          <div class="kpi-icon"><i data-lucide="piggy-bank"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Savings</div>
-            <div class="kpi-value" id="an-savings">—</div>
-          </div>
-        </div>
-        <div class="kpi-card networth">
-          <div class="kpi-icon"><i data-lucide="landmark"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Net Worth</div>
-            <div class="kpi-value" id="an-networth">—</div>
-          </div>
-        </div>
-        <div class="kpi-card rate">
-          <div class="kpi-icon"><i data-lucide="award"></i></div>
-          <div class="kpi-body">
-            <div class="kpi-label">Inv. Growth</div>
-            <div class="kpi-value" id="an-inv-growth">—</div>
-          </div>
-        </div>
-      </div>
-
+      <div class="page-header"><h2>Executive Analytics</h2><p>Comprehensive intelligence</p></div>
+      <div class="kpi-grid" id="an-kpis"></div>
       <div class="charts-grid">
-        <div class="chart-card wide">
-          <div class="chart-card-header">
-            <h3>Annual Overview — Monthly Trend</h3>
-          </div>
-          <canvas id="an-line-chart" height="280"></canvas>
-        </div>
-        <div class="chart-card">
-          <div class="chart-card-header"><h3>Fund Distribution</h3></div>
-          <canvas id="an-donut-chart" height="240"></canvas>
-        </div>
-      </div>
-
-      <div class="ratio-cards">
-        <div class="ratio-card">
-          <div class="ratio-label">Savings Rate</div>
-          <div class="ratio-value" id="rat-savings">—</div>
-          <div class="ratio-bar"><div class="ratio-fill green" id="bar-savings"></div></div>
-        </div>
-        <div class="ratio-card">
-          <div class="ratio-label">Expense Ratio</div>
-          <div class="ratio-value" id="rat-expense">—</div>
-          <div class="ratio-bar"><div class="ratio-fill red" id="bar-expense"></div></div>
-        </div>
-        <div class="ratio-card">
-          <div class="ratio-label">Investment Rate</div>
-          <div class="ratio-value" id="rat-invest">—</div>
-          <div class="ratio-bar"><div class="ratio-fill blue" id="bar-invest"></div></div>
-        </div>
-        <div class="ratio-card">
-          <div class="ratio-label">Investment Growth</div>
-          <div class="ratio-value" id="rat-growth">—</div>
-          <div class="ratio-bar"><div class="ratio-fill purple" id="bar-growth"></div></div>
-        </div>
+        <div class="chart-card wide"><canvas id="an-line-chart" height="280"></canvas></div>
+        <div class="chart-card"><canvas id="an-donut-chart" height="240"></canvas></div>
       </div>
     </section>
+  </main>
+</div>
 
-  </main><!-- /main-content -->
-</div><!-- /#app -->
+<script>
+  // ==============================================================
+  // REALISTIC 12-MONTH EMPLOYEE DATA (SALARY, EXPENSES, INVESTMENTS)
+  // ==============================================================
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const fullMonths = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  
+  // Monthly Income: Salary + occasional bonuses (March hike, December bonus)
+  const monthlyIncome = [85000, 85000, 92000, 92000, 92000, 95000, 95000, 95000, 98000, 98000, 98000, 125000];
+  // Monthly Expenses: Rent, groceries, utilities, lifestyle (gradual increase + festive season)
+  const monthlyExpense = [42000, 41500, 43800, 43000, 45500, 47000, 46500, 48000, 49000, 51000, 50500, 58500];
+  // Monthly Investment: SIP, stocks, PPF contributions
+  const monthlyInvest = [15000, 15000, 18000, 18000, 20000, 20000, 22000, 22000, 25000, 25000, 27000, 32000];
 
-<script src="script.js"></script>
+  // Category-wise Annual Expenses (realistic proportions)
+  const expenseCategories = {
+    'Rent / EMI': 210000, 'Groceries & Food': 96000, 'Transportation': 54000,
+    'Utilities & Bills': 48000, 'Entertainment': 42000, 'Healthcare': 27000,
+    'Shopping': 66000, 'Education': 18000
+  };
+
+  // Investment Portfolio with current market valuation
+  const investments = [
+    { name: 'HDFC MidCap Opp Dir-G', type: 'Mutual Fund', invested: 125000, current: 158000, returnPct: 26.4 },
+    { name: 'ICICI Bluechip Fund', type: 'Mutual Fund', invested: 98000, current: 112000, returnPct: 14.3 },
+    { name: 'Reliance Industries', type: 'Stock', invested: 75000, current: 89500, returnPct: 19.3 },
+    { name: 'Tata Motors', type: 'Stock', invested: 45000, current: 62000, returnPct: 37.8 },
+    { name: 'Digital Gold (Goldex)', type: 'Gold', invested: 50000, current: 58200, returnPct: 16.4 },
+    { name: 'PPF Account', type: 'Fixed Deposit', invested: 70000, current: 75600, returnPct: 8.0 },
+    { name: 'Nippon ETF Nifty50', type: 'ETF', invested: 60000, current: 68400, returnPct: 14.0 }
+  ];
+
+  // Derived totals for KPIs
+  const totalAnnualIncome = monthlyIncome.reduce((a,b)=>a+b,0);
+  const totalAnnualExpense = monthlyExpense.reduce((a,b)=>a+b,0);
+  const totalAnnualInvest = monthlyInvest.reduce((a,b)=>a+b,0);
+  const netSavings = totalAnnualIncome - totalAnnualExpense - totalAnnualInvest;
+  const totalInvestedVal = investments.reduce((s,i)=> s + i.invested, 0);
+  const totalCurrentVal = investments.reduce((s,i)=> s + i.current, 0);
+  const totalReturns = totalCurrentVal - totalInvestedVal;
+  const invReturnRate = (totalReturns / totalInvestedVal) * 100;
+  const savingsRate = (netSavings / totalAnnualIncome) * 100;
+  const expenseRatio = (totalAnnualExpense / totalAnnualIncome) * 100;
+  const netWorth = totalAnnualIncome - totalAnnualExpense + totalReturns;
+
+  // Chart instances store
+  let activeCharts = {};
+  function destroyChart(id) { if(activeCharts[id]) { activeCharts[id].destroy(); delete activeCharts[id]; } }
+
+  function renderAllCharts() {
+    // Dashboard Cash Flow
+    destroyChart('dash-cashflow-chart');
+    const ctx1 = document.getElementById('dash-cashflow-chart').getContext('2d');
+    activeCharts['dash-cashflow-chart'] = new Chart(ctx1, {
+      type: 'line', data: { labels: months, datasets: [
+        { label: 'Income', data: monthlyIncome, borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.05)', tension: 0.3, fill: true, pointRadius: 4 },
+        { label: 'Expenses', data: monthlyExpense, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.05)', tension: 0.3, fill: true, pointRadius: 4 },
+        { label: 'Investments', data: monthlyInvest, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.05)', tension: 0.3, fill: true, pointRadius: 4 }
+      ]}, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'top', labels: { color: '#8892b0' } } } }
+    });
+    // Dashboard Allocation Pie
+    destroyChart('dash-pie-chart');
+    const pieCtx = document.getElementById('dash-pie-chart').getContext('2d');
+    activeCharts['dash-pie-chart'] = new Chart(pieCtx, { type: 'doughnut', data: { labels: ['Total Expenses', 'Investments', 'Savings'], datasets: [{ data: [totalAnnualExpense, totalAnnualInvest, netSavings], backgroundColor: ['#ef4444','#3b82f6','#22c55e'], borderWidth: 0 }] } });
+    // Income Trend Bar
+    destroyChart('income-trend-chart');
+    const incCtx = document.getElementById('income-trend-chart').getContext('2d');
+    activeCharts['income-trend-chart'] = new Chart(incCtx, { type: 'bar', data: { labels: months, datasets: [{ label: 'Monthly Income', data: monthlyIncome, backgroundColor: '#22c55e', borderRadius: 6 }] } });
+    // Expense Pie
+    destroyChart('exp-pie-chart');
+    const expPie = document.getElementById('exp-pie-chart').getContext('2d');
+    activeCharts['exp-pie-chart'] = new Chart(expPie, { type: 'pie', data: { labels: Object.keys(expenseCategories), datasets: [{ data: Object.values(expenseCategories), backgroundColor: ['#f97316','#10b981','#3b82f6','#8b5cf6','#ec4899','#14b8a6','#f59e0b','#6366f1'] }] } });
+    // Monthly Expense Trend
+    destroyChart('exp-trend-chart');
+    const expTrend = document.getElementById('exp-trend-chart').getContext('2d');
+    activeCharts['exp-trend-chart'] = new Chart(expTrend, { type: 'line', data: { labels: months, datasets: [{ label: 'Monthly Spending', data: monthlyExpense, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', fill: true, tension: 0.3 }] } });
+    // Investment Pie by Type
+    const typeMap = {}; investments.forEach(inv => { if(!typeMap[inv.type]) typeMap[inv.type]=0; typeMap[inv.type] += inv.invested; });
+    destroyChart('inv-pie-chart');
+    const invPie = document.getElementById('inv-pie-chart').getContext('2d');
+    activeCharts['inv-pie-chart'] = new Chart(invPie, { type: 'doughnut', data: { labels: Object.keys(typeMap), datasets: [{ data: Object.values(typeMap), backgroundColor: ['#6C63FF','#3ECFCF','#f59e0b','#06b6d4'] }] } });
+    // Monthly Investment Flow
+    destroyChart('inv-bar-chart');
+    const invBar = document.getElementById('inv-bar-chart').getContext('2d');
+    activeCharts['inv-bar-chart'] = new Chart(invBar, { type: 'bar', data: { labels: months, datasets: [{ label: 'Monthly Investment', data: monthlyInvest, backgroundColor: '#3b82f6', borderRadius: 6 }] } });
+    // Analytics Line Chart (Income vs Expense vs Invest)
+    destroyChart('an-line-chart');
+    const anLine = document.getElementById('an-line-chart').getContext('2d');
+    activeCharts['an-line-chart'] = new Chart(anLine, { type: 'line', data: { labels: months, datasets: [
+      { label: 'Income', data: monthlyIncome, borderColor: '#22c55e', tension: 0.3 },
+      { label: 'Expense', data: monthlyExpense, borderColor: '#ef4444', tension: 0.3 },
+      { label: 'Invest', data: monthlyInvest, borderColor: '#3b82f6', tension: 0.3 }
+    ] }, options: { plugins: { legend: { position: 'top' } } } });
+    // Analytics Donut
+    destroyChart('an-donut-chart');
+    const donut = document.getElementById('an-donut-chart').getContext('2d');
+    activeCharts['an-donut-chart'] = new Chart(donut, { type: 'doughnut', data: { labels: ['Expenses', 'Investments', 'Net Savings'], datasets: [{ data: [totalAnnualExpense, totalAnnualInvest, netSavings], backgroundColor: ['#ef4444','#3b82f6','#22c55e'] }] } });
+  }
+
+  function updateAllKPIs() {
+    // Dashboard KPIs
+    document.getElementById('dash-kpis').innerHTML = `
+      <div class="kpi-card income"><div><div class="kpi-label">Annual Income</div><div class="kpi-value">₹${totalAnnualIncome.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card expense"><div><div class="kpi-label">Total Expenses</div><div class="kpi-value">₹${totalAnnualExpense.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card investment"><div><div class="kpi-label">Investments</div><div class="kpi-value">₹${totalAnnualInvest.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card savings"><div><div class="kpi-label">Net Savings</div><div class="kpi-value">₹${netSavings.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card networth"><div><div class="kpi-label">Net Worth</div><div class="kpi-value">₹${netWorth.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card rate"><div><div class="kpi-label">Savings Rate</div><div class="kpi-value">${savingsRate.toFixed(1)}%</div></div></div>
+    `;
+    // Income KPIs
+    const avgIncome = totalAnnualIncome/12, highest = Math.max(...monthlyIncome), lowest = Math.min(...monthlyIncome);
+    document.getElementById('inc-kpis').innerHTML = `
+      <div class="kpi-card income"><div>Annual Total<div class="kpi-value">₹${totalAnnualIncome.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card savings"><div>Monthly Avg<div class="kpi-value">₹${Math.round(avgIncome).toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card investment"><div>Highest Month<div class="kpi-value">₹${highest.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card expense"><div>Lowest Month<div class="kpi-value">₹${lowest.toLocaleString('en-IN')}</div></div></div>
+    `;
+    // Income Table
+    const incomeBody = document.getElementById('income-tbody'); incomeBody.innerHTML = '';
+    for(let i=0;i<months.length;i++) {
+      let growth = i===0 ? 0 : ((monthlyIncome[i] - monthlyIncome[i-1]) / monthlyIncome[i-1] * 100);
+      let growthHtml = growth===0 ? '—' : (growth>0 ? `<span class="text-green">+${growth.toFixed(1)}%</span>` : `<span class="text-red">${growth.toFixed(1)}%</span>`);
+      incomeBody.innerHTML += `<tr><td>${months[i]}</td><td><span class="badge badge-green">Salary + Bonus</span></td><td><strong>₹${monthlyIncome[i].toLocaleString('en-IN')}</strong></td><td>${growthHtml}</td></tr>`;
+    }
+    // Expenditure KPIs
+    const topCat = Object.entries(expenseCategories).sort((a,b)=>b[1]-a[1])[0][0];
+    document.getElementById('exp-kpis').innerHTML = `
+      <div class="kpi-card expense"><div>Annual Expenses<div class="kpi-value">₹${totalAnnualExpense.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card income"><div>Expense Ratio<div class="kpi-value">${expenseRatio.toFixed(1)}%</div></div></div>
+      <div class="kpi-card savings"><div>Top Category<div class="kpi-value">${topCat}</div></div></div>
+      <div class="kpi-card networth"><div>Categories<div class="kpi-value">${Object.keys(expenseCategories).length}</div></div></div>
+    `;
+    // Expense Table
+    const expBody = document.getElementById('exp-tbody'); expBody.innerHTML = '';
+    Object.entries(expenseCategories).forEach(([cat, amt]) => {
+      let share = (amt / totalAnnualExpense * 100).toFixed(1);
+      expBody.innerHTML += `<tr><td>${cat}</td><td><strong>₹${amt.toLocaleString('en-IN')}</strong></td><td><span class="badge badge-red">${share}%</span></td></tr>`;
+    });
+    // Investments KPIs
+    document.getElementById('inv-kpis').innerHTML = `
+      <div class="kpi-card investment"><div>Total Invested<div class="kpi-value">₹${totalInvestedVal.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card income"><div>Current Value<div class="kpi-value">₹${totalCurrentVal.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card savings"><div>Total Returns<div class="kpi-value">${totalReturns>=0?'+':''}₹${totalReturns.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card rate"><div>Return Rate<div class="kpi-value">${invReturnRate.toFixed(2)}%</div></div></div>
+    `;
+    // Investment Holdings Table
+    const invBody = document.getElementById('inv-tbody'); invBody.innerHTML = '';
+    investments.forEach(inv => {
+      let profitClass = inv.returnPct >=0 ? 'text-green' : 'text-red';
+      invBody.innerHTML += `<tr><td><strong>${inv.name}</strong></td><td><span class="badge badge-blue">${inv.type}</span></td><td>₹${inv.invested.toLocaleString('en-IN')}</td><td>₹${inv.current.toLocaleString('en-IN')}</td><td class="${profitClass}">${inv.returnPct>=0?'+':''}${inv.returnPct}%</td></tr>`;
+    });
+    // Analytics KPIs
+    const investGrowth = ((totalCurrentVal - totalInvestedVal)/totalInvestedVal)*100;
+    document.getElementById('an-kpis').innerHTML = `
+      <div class="kpi-card income"><div>Income<div class="kpi-value">₹${totalAnnualIncome.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card expense"><div>Expenses<div class="kpi-value">₹${totalAnnualExpense.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card investment"><div>Invested<div class="kpi-value">₹${totalAnnualInvest.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card savings"><div>Savings<div class="kpi-value">₹${netSavings.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card networth"><div>Net Worth<div class="kpi-value">₹${netWorth.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card rate"><div>Inv. Growth<div class="kpi-value">${investGrowth.toFixed(1)}%</div></div></div>
+    `;
+  }
+
+  // Navigation & Helpers
+  function navigate(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(`page-${pageId}`).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if(event && event.target) event.target.closest('.nav-item')?.classList.add('active');
+    document.getElementById('topbar-title').innerText = pageId.charAt(0).toUpperCase() + pageId.slice(1);
+    if(window.innerWidth <= 900) document.getElementById('sidebar')?.classList.remove('open');
+  }
+  function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+  function handleLogout() {
+    document.getElementById('app').classList.add('hidden');
+    document.getElementById('auth-screen').classList.remove('hidden');
+  }
+  // Demo login
+  document.getElementById('demo-login-btn').onclick = () => {
+    document.getElementById('auth-screen').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    renderAllCharts(); updateAllKPIs(); navigate('dashboard');
+  };
+  // Initial lucide icons (optional)
+  if(typeof lucide !== 'undefined') lucide.createIcons();
+</script>
 </body>
 </html>
