@@ -5,7 +5,7 @@
 
 // ── CONFIG ─────────────────────────────────────────────────────────
 // Change this URL to your deployed backend URL when you go live
-const API_BASE = 'http://127.0.0.1:5000/api';
+const API_BASE = 'https://financeweb1.onrender.com/api';
 
 // ── STATE ──────────────────────────────────────────────────────────
 let currentUser   = null;
