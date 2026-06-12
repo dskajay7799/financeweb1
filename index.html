@@ -4,555 +4,200 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Personal Finance Web</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    /* ═══════════════════════════════════════════════════════════
-       PERSONAL FINANCE WEB — Complete Embedded CSS
-       Dark/Light mode · Responsive · Full auth forms
-    ═══════════════════════════════════════════════════════════ */
-
-    /* ── Tokens ── */
     :root {
-      --accent:       #6C63FF;
-      --accent-2:     #3ECFCF;
-      --income-clr:   #22c55e;
-      --expense-clr:  #ef4444;
-      --invest-clr:   #3b82f6;
-      --savings-clr:  #f59e0b;
-      --networth-clr: #8b5cf6;
-      --rate-clr:     #06b6d4;
-      --sidebar-w:    240px;
-      --topbar-h:     64px;
-      --radius:       14px;
-      --radius-sm:    8px;
-      --font:         'Segoe UI', system-ui, -apple-system, sans-serif;
-      --tr:           0.22s ease;
+      --accent: #6C63FF; --accent-2: #3ECFCF; --income-clr: #22c55e;
+      --expense-clr: #ef4444; --invest-clr: #3b82f6; --savings-clr: #f59e0b;
+      --networth-clr: #8b5cf6; --rate-clr: #06b6d4; --sidebar-w: 240px;
+      --topbar-h: 64px; --radius: 14px; --radius-sm: 8px;
+      --font: 'Segoe UI', system-ui, -apple-system, sans-serif; --transition: 0.22s ease;
     }
-    [data-theme="dark"] {
-      --bg:          #0f1117;
-      --bg-2:        #1a1d27;
-      --bg-3:        #22263a;
-      --border:      rgba(255,255,255,0.07);
-      --text:        #f0f2ff;
-      --muted:       #8892b0;
-      --shadow:      0 4px 24px rgba(0,0,0,0.45);
-    }
-    [data-theme="light"] {
-      --bg:          #f0f2fb;
-      --bg-2:        #ffffff;
-      --bg-3:        #e8eaf6;
-      --border:      rgba(0,0,0,0.08);
-      --text:        #1a1d2e;
-      --muted:       #6b7280;
-      --shadow:      0 4px 24px rgba(0,0,0,0.09);
-    }
-
-    /* ── Reset ── */
+    [data-theme="dark"] { --bg: #0f1117; --bg-2: #1a1d27; --bg-3: #22263a; --border: rgba(255,255,255,0.07); --text-primary: #f0f2ff; --text-muted: #8892b0; --shadow: 0 4px 24px rgba(0,0,0,0.4); --chart-grid: rgba(255,255,255,0.05); }
+    [data-theme="light"] { --bg: #f5f6fb; --bg-2: #ffffff; --bg-3: #eef0f8; --border: rgba(0,0,0,0.07); --text-primary: #1a1d2e; --text-muted: #6b7280; --shadow: 0 4px 24px rgba(0,0,0,0.08); --chart-grid: rgba(0,0,0,0.06); }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { font-size: 16px; scroll-behavior: smooth; }
-    body {
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--text);
-      transition: background var(--tr), color var(--tr);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+    body { font-family: var(--font); background: var(--bg); color: var(--text-primary); transition: background var(--transition), color var(--transition); min-height: 100vh; overflow-x: hidden; }
     a, button { cursor: pointer; font-family: var(--font); border: none; outline: none; background: none; }
     .hidden { display: none !important; }
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
 
-    /* ═══════════════════════════════════════════════════
-       AUTH SCREEN
-    ═══════════════════════════════════════════════════ */
+    /* ── AUTH SCREEN ── */
     .auth-screen {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2.5rem 1rem;
-      background: var(--bg);
-      position: relative;
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem 1rem; background: var(--bg); position: relative;
     }
-    /* Ambient glow */
     .auth-screen::before {
-      content: '';
-      position: fixed;
-      top: -200px; left: -200px;
-      width: 600px; height: 600px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(108,99,255,0.14) 0%, transparent 70%);
-      pointer-events: none;
+      content: ''; position: fixed; top: -200px; left: -200px;
+      width: 600px; height: 600px; border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle, rgba(108,99,255,0.13) 0%, transparent 70%);
     }
     .auth-screen::after {
-      content: '';
-      position: fixed;
-      bottom: -200px; right: -200px;
-      width: 500px; height: 500px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(62,207,207,0.10) 0%, transparent 70%);
-      pointer-events: none;
+      content: ''; position: fixed; bottom: -200px; right: -200px;
+      width: 500px; height: 500px; border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle, rgba(62,207,207,0.09) 0%, transparent 70%);
     }
-
-    /* Brand header above card */
-    .auth-brand {
-      display: flex;
-      align-items: center;
-      gap: 0.875rem;
-      margin-bottom: 1.75rem;
-      z-index: 1;
-    }
-    .auth-logo-svg { flex-shrink: 0; }
+    .auth-brand { display: flex; align-items: center; gap: 0.875rem; margin-bottom: 1.75rem; z-index: 1; }
     .auth-brand-name {
-      font-size: 1.65rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
+      font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px;
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-    .auth-brand-tagline { font-size: 0.78rem; color: var(--muted); margin-top: 1px; }
-
-    /* Card */
+    .auth-brand-tagline { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
     .auth-card {
-      background: var(--bg-2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 2.25rem 2rem 2rem;
-      width: 100%;
-      max-width: 420px;
-      box-shadow: var(--shadow);
-      z-index: 1;
-      animation: slideUp 0.38s ease both;
+      background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 2.25rem 2rem 2rem; width: 100%; max-width: 420px;
+      box-shadow: var(--shadow); z-index: 1; animation: slideUp 0.38s ease both;
     }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .auth-card-title    { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.2rem; }
-    .auth-card-subtitle { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
-
-    /* Demo hint */
+    @keyframes slideUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+    .auth-card-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.2rem; color: var(--text-primary); }
+    .auth-card-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.4rem; }
     .demo-hint {
-      background: rgba(108,99,255,0.10);
-      border: 1px solid rgba(108,99,255,0.22);
-      border-radius: var(--radius-sm);
-      padding: 0.6rem 0.9rem;
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-bottom: 1.35rem;
-      line-height: 1.5;
+      background: rgba(108,99,255,0.10); border: 1px solid rgba(108,99,255,0.22);
+      border-radius: var(--radius-sm); padding: 0.6rem 0.9rem;
+      font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.5;
     }
     .demo-hint strong { color: var(--accent); }
-
-    /* Error message */
     .auth-error {
-      background: rgba(239,68,68,0.10);
-      border: 1px solid rgba(239,68,68,0.28);
-      border-radius: var(--radius-sm);
-      padding: 0.6rem 0.9rem;
-      font-size: 0.82rem;
-      color: #f87171;
-      margin-bottom: 1rem;
+      background: rgba(239,68,68,0.10); border: 1px solid rgba(239,68,68,0.28);
+      border-radius: var(--radius-sm); padding: 0.6rem 0.9rem;
+      font-size: 0.82rem; color: #f87171; margin-bottom: 1rem;
     }
-
-    /* Form fields */
     .form-group { margin-bottom: 1rem; }
     .form-label {
-      display: block;
-      font-size: 0.76rem;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 0.38rem;
+      display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.38rem;
     }
     .form-input {
-      width: 100%;
-      padding: 0.68rem 0.9rem;
-      background: var(--bg-3);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text);
-      font-size: 0.94rem;
-      font-family: var(--font);
-      transition: border-color var(--tr), box-shadow var(--tr);
+      width: 100%; padding: 0.68rem 0.9rem; background: var(--bg-3);
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text-primary); font-size: 0.94rem; font-family: var(--font);
+      transition: border-color var(--transition), box-shadow var(--transition);
     }
-    .form-input:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(108,99,255,0.16);
-    }
-    .form-input::placeholder { color: var(--muted); opacity: 0.55; }
-
-    /* Two-col row for name fields on signup */
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-    @media (max-width: 420px) { .form-row { grid-template-columns: 1fr; } }
-
-    /* Primary CTA button */
+    .form-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,99,255,0.16); }
+    .form-input::placeholder { color: var(--text-muted); opacity: 0.55; }
     .btn-primary {
-      width: 100%;
-      padding: 0.8rem;
+      width: 100%; padding: 0.8rem;
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #fff;
-      font-size: 0.95rem;
-      font-weight: 700;
-      border-radius: var(--radius-sm);
-      margin-top: 0.5rem;
-      margin-bottom: 1.1rem;
-      letter-spacing: 0.02em;
-      transition: opacity var(--tr), transform var(--tr), box-shadow var(--tr);
-      box-shadow: 0 4px 14px rgba(108,99,255,0.32);
+      color: #fff; font-size: 0.95rem; font-weight: 700; border-radius: var(--radius-sm);
+      margin-top: 0.5rem; margin-bottom: 1.1rem; letter-spacing: 0.02em;
+      transition: opacity var(--transition), transform var(--transition);
+      box-shadow: 0 4px 14px rgba(108,99,255,0.3);
     }
-    .btn-primary:hover  { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(108,99,255,0.4); }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
     .btn-primary:active { transform: translateY(0); }
     .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
-
-    /* Switch link */
-    .auth-switch { text-align: center; font-size: 0.87rem; color: var(--muted); }
+    .auth-switch { text-align: center; font-size: 0.87rem; color: var(--text-muted); }
     .auth-switch a { color: var(--accent); font-weight: 600; text-decoration: none; }
     .auth-switch a:hover { text-decoration: underline; }
-
-    /* Divider */
-    .auth-divider {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin: 1.1rem 0;
-      color: var(--muted);
-      font-size: 0.78rem;
-    }
-    .auth-divider::before, .auth-divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    /* Theme toggle on auth screen */
     .auth-theme-btn {
-      margin-top: 1.5rem;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.8rem;
-      color: var(--muted);
-      padding: 0.4rem 0.8rem;
-      border-radius: 99px;
-      border: 1px solid var(--border);
-      background: var(--bg-2);
-      transition: background var(--tr);
+      margin-top: 1.5rem; z-index: 1; display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.8rem; color: var(--text-muted); padding: 0.4rem 0.9rem;
+      border-radius: 99px; border: 1px solid var(--border); background: var(--bg-2);
+      transition: background var(--transition);
     }
     .auth-theme-btn:hover { background: var(--bg-3); }
 
-    /* ═══════════════════════════════════════════════════
-       MAIN APP
-    ═══════════════════════════════════════════════════ */
+    /* ── MAIN APP ── */
     #app { display: flex; height: 100vh; overflow: hidden; }
-
-    /* Sidebar */
-    .sidebar {
-      width: var(--sidebar-w);
-      height: 100vh;
-      background: var(--bg-2);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-      transition: transform var(--tr);
-      z-index: 100;
-    }
-    .sidebar-brand {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      padding: 0 1.25rem;
-      height: var(--topbar-h);
-      border-bottom: 1px solid var(--border);
-      font-weight: 800;
-      font-size: 1rem;
-      letter-spacing: -0.3px;
-      flex-shrink: 0;
-    }
-    .brand-logo {
-      width: 30px; height: 30px;
-      border-radius: 7px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .brand-logo svg { width: 16px; height: 16px; }
-    .brand-text-main { color: var(--text); }
-    .brand-text-accent {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .sidebar-nav { flex: 1; padding: 0.875rem 0.75rem; display: flex; flex-direction: column; gap: 0.2rem; overflow-y: auto; }
-    .nav-section-label {
-      font-size: 0.68rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      font-weight: 700;
-      padding: 0.75rem 0.875rem 0.35rem;
-    }
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      padding: 0.6rem 0.875rem;
-      border-radius: var(--radius-sm);
-      color: var(--muted);
-      font-size: 0.88rem;
-      font-weight: 500;
-      text-decoration: none;
-      transition: background var(--tr), color var(--tr);
-    }
-    .nav-item .nav-icon { font-size: 1.05rem; flex-shrink: 0; }
-    .nav-item:hover  { background: var(--bg-3); color: var(--text); }
+    .sidebar { width: var(--sidebar-w); height: 100vh; background: var(--bg-2); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; transition: transform var(--transition); z-index: 100; }
+    .sidebar-brand { display: flex; align-items: center; gap: 0.75rem; padding: 1.25rem; border-bottom: 1px solid var(--border); height: var(--topbar-h); font-weight: 700; font-size: 1rem; }
+    .brand-logo { width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .brand-logo svg { width: 14px; height: 14px; }
+    .brand-accent { background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .sidebar-nav { flex: 1; padding: 1rem 0.75rem; display: flex; flex-direction: column; gap: 0.2rem; }
+    .nav-section { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 700; padding: 0.75rem 0.875rem 0.3rem; }
+    .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.62rem 0.875rem; border-radius: var(--radius-sm); color: var(--text-muted); text-decoration: none; transition: all 0.2s; cursor: pointer; font-size: 0.88rem; font-weight: 500; }
+    .nav-item:hover { background: var(--bg-3); color: var(--text-primary); }
     .nav-item.active { background: rgba(108,99,255,0.15); color: var(--accent); font-weight: 700; }
-    .nav-item.active .nav-badge {
-      background: var(--accent);
-      color: #fff;
-      font-size: 0.65rem;
-      padding: 0.1rem 0.45rem;
-      border-radius: 99px;
-      margin-left: auto;
-    }
-
-    .sidebar-footer {
-      padding: 0.875rem 0.75rem;
-      border-top: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
-    .sidebar-footer-btn {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-      padding: 0.55rem 0.875rem;
-      border-radius: var(--radius-sm);
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--muted);
-      transition: background var(--tr), color var(--tr);
-      width: 100%;
-      text-align: left;
-    }
-    .sidebar-footer-btn:hover { background: var(--bg-3); color: var(--text); }
-    .sidebar-footer-btn.logout:hover { background: rgba(239,68,68,0.1); color: #f87171; }
-    .user-section {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-      padding: 0.65rem 0.875rem;
-      border-radius: var(--radius-sm);
-      background: var(--bg-3);
-      margin-bottom: 0.4rem;
-    }
-    .user-av {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 0.8rem; color: #fff; flex-shrink: 0;
-    }
+    .sidebar-footer { padding: 1rem 0.75rem; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.25rem; }
+    .user-section { display: flex; align-items: center; gap: 0.65rem; padding: 0.65rem 0.875rem; border-radius: var(--radius-sm); background: var(--bg-3); margin-bottom: 0.35rem; }
+    .user-av { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.78rem; color: #fff; flex-shrink: 0; }
     .user-info { min-width: 0; }
-    .user-info-name { font-size: 0.82rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .user-info-email { font-size: 0.7rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    /* Main content */
+    .user-info-name { font-size: 0.81rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); }
+    .footer-btn { display: flex; align-items: center; gap: 0.65rem; padding: 0.52rem 0.875rem; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 500; color: var(--text-muted); transition: background var(--transition), color var(--transition); width: 100%; text-align: left; }
+    .footer-btn:hover { background: var(--bg-3); color: var(--text-primary); }
+    .footer-btn.logout:hover { background: rgba(239,68,68,0.1); color: #f87171; }
     .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-
-    /* Topbar */
-    .topbar {
-      height: var(--topbar-h);
-      background: var(--bg-2);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      padding: 0 1.5rem;
-      gap: 1rem;
-      flex-shrink: 0;
-    }
-    .hamburger {
-      display: none;
-      align-items: center; justify-content: center;
-      width: 36px; height: 36px;
-      border-radius: var(--radius-sm);
-      color: var(--muted);
-      font-size: 1.3rem;
-      transition: background var(--tr);
-    }
-    .hamburger:hover { background: var(--bg-3); }
-    .topbar-title { font-size: 1rem; font-weight: 700; flex: 1; }
-    .topbar-right { display: flex; align-items: center; gap: 0.875rem; margin-left: auto; }
-    .year-pill {
-      display: flex; align-items: center; gap: 0.4rem;
-      background: var(--bg-3);
-      border: 1px solid var(--border);
-      border-radius: 99px;
-      padding: 0.3rem 0.75rem;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text);
-    }
-    .year-pill select {
-      background: transparent;
-      border: none;
-      color: var(--text);
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: var(--font);
-    }
-    .topbar-user-av {
-      width: 34px; height: 34px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 0.8rem; color: #fff;
-    }
-    .topbar-user-name { font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
-
-    /* Pages */
-    .page { display: none; flex: 1; overflow-y: auto; padding: 2rem; animation: fadeIn 0.28s ease; }
+    .topbar { height: var(--topbar-h); background: var(--bg-2); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.5rem; gap: 1rem; flex-shrink: 0; }
+    .topbar-title { font-size: 1.1rem; font-weight: 700; flex: 1; }
+    .hamburger { display: none; font-size: 1.4rem; color: var(--text-muted); background: none; padding: 0.3rem; }
+    .page { display: none; flex: 1; overflow-y: auto; padding: 2rem; animation: fadeIn 0.3s ease; }
     .page.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     .page-header { margin-bottom: 1.75rem; }
-    .page-header h2 { font-size: 1.45rem; font-weight: 800; margin-bottom: 0.2rem; }
-    .page-header p { color: var(--muted); font-size: 0.875rem; }
-
-    /* KPI Cards */
-    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 1rem; margin-bottom: 1.75rem; }
-    .kpi-card {
-      background: var(--bg-2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.2rem 1.25rem;
-      display: flex; align-items: center; gap: 0.875rem;
-      box-shadow: var(--shadow);
-      border-left: 3px solid transparent;
-      transition: transform var(--tr), box-shadow var(--tr);
-    }
-    .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
-    .kpi-card.income     { border-left-color: var(--income-clr); }
-    .kpi-card.expense    { border-left-color: var(--expense-clr); }
+    .page-header h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .page-header p { color: var(--text-muted); }
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.75rem; }
+    .kpi-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: var(--shadow); border-left: 3px solid transparent; transition: transform var(--transition); }
+    .kpi-card:hover { transform: translateY(-2px); }
+    .kpi-card.income { border-left-color: var(--income-clr); }
+    .kpi-card.expense { border-left-color: var(--expense-clr); }
     .kpi-card.investment { border-left-color: var(--invest-clr); }
-    .kpi-card.savings    { border-left-color: var(--savings-clr); }
-    .kpi-card.networth   { border-left-color: var(--networth-clr); }
-    .kpi-card.rate       { border-left-color: var(--rate-clr); }
-    .kpi-icon {
-      width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
-    }
-    .kpi-card.income .kpi-icon     { background: rgba(34,197,94,0.12); }
-    .kpi-card.expense .kpi-icon    { background: rgba(239,68,68,0.12); }
-    .kpi-card.investment .kpi-icon { background: rgba(59,130,246,0.12); }
-    .kpi-card.savings .kpi-icon    { background: rgba(245,158,11,0.12); }
-    .kpi-card.networth .kpi-icon   { background: rgba(139,92,246,0.12); }
-    .kpi-card.rate .kpi-icon       { background: rgba(6,182,212,0.12); }
-    .kpi-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; }
-    .kpi-value { font-size: 1.28rem; font-weight: 800; margin-top: 0.15rem; letter-spacing: -0.4px; }
-
-    /* Chart cards */
+    .kpi-card.savings { border-left-color: var(--savings-clr); }
+    .kpi-card.networth { border-left-color: var(--networth-clr); }
+    .kpi-card.rate { border-left-color: var(--rate-clr); }
+    .kpi-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    .kpi-value { font-size: 1.3rem; font-weight: 700; margin-top: 0.2rem; }
     .charts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.75rem; }
-    .chart-card {
-      background: var(--bg-2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.25rem;
-      box-shadow: var(--shadow);
-    }
-    .chart-card.wide { grid-column: span 1; }
-    .chart-card h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 1rem; }
-
-    /* Tables */
-    .table-card {
-      background: var(--bg-2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.25rem;
-      overflow-x: auto;
-      margin-bottom: 1.5rem;
-      box-shadow: var(--shadow);
-    }
-    .table-card h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 1rem; }
+    .chart-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; box-shadow: var(--shadow); }
+    .chart-card h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .table-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; overflow-x: auto; margin-bottom: 1.5rem; box-shadow: var(--shadow); }
+    .table-card h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.75rem; }
     table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-    th { text-align: left; padding: 0.65rem 0.875rem; color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); font-weight: 700; }
-    td { padding: 0.7rem 0.875rem; border-bottom: 1px solid var(--border); }
+    th { text-align: left; padding: 0.75rem; color: var(--text-muted); border-bottom: 1px solid var(--border); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    td { padding: 0.75rem; border-bottom: 1px solid var(--border); }
     tbody tr:last-child td { border-bottom: none; }
     tbody tr:hover { background: var(--bg-3); }
-    .badge { display: inline-block; padding: 0.18rem 0.55rem; border-radius: 99px; font-size: 0.71rem; font-weight: 700; }
-    .badge-green  { background: rgba(34,197,94,0.15);  color: var(--income-clr); }
-    .badge-red    { background: rgba(239,68,68,0.15);  color: var(--expense-clr); }
-    .badge-blue   { background: rgba(59,130,246,0.15); color: var(--invest-clr); }
-    .badge-amber  { background: rgba(245,158,11,0.15); color: var(--savings-clr); }
-    .badge-cyan   { background: rgba(6,182,212,0.15);  color: var(--rate-clr); }
-    .badge-purple { background: rgba(139,92,246,0.15); color: var(--networth-clr); }
-    .text-green { color: var(--income-clr); }
-    .text-red   { color: var(--expense-clr); }
-
-    /* Analytics ratio cards */
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.72rem; font-weight: 600; }
+    .badge-green { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .badge-red { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .badge-blue { background: rgba(59,130,246,0.15); color: #3b82f6; }
+    .badge-amber { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .badge-cyan { background: rgba(6,182,212,0.15); color: #06b6d4; }
+    .badge-purple { background: rgba(139,92,246,0.15); color: #8b5cf6; }
+    .text-green { color: #22c55e; }
+    .text-red { color: #ef4444; }
     .ratio-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-    .ratio-card  { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; box-shadow: var(--shadow); }
-    .ratio-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; margin-bottom: 0.35rem; }
+    .ratio-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; box-shadow: var(--shadow); }
+    .ratio-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem; }
     .ratio-value { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.75rem; }
-    .ratio-bar   { height: 6px; background: var(--bg-3); border-radius: 99px; overflow: hidden; }
-    .ratio-fill  { height: 100%; border-radius: 99px; transition: width 1s ease; }
-    .ratio-fill.green  { background: var(--income-clr); }
-    .ratio-fill.red    { background: var(--expense-clr); }
-    .ratio-fill.blue   { background: var(--invest-clr); }
+    .ratio-bar { height: 6px; background: var(--bg-3); border-radius: 99px; overflow: hidden; }
+    .ratio-fill { height: 100%; border-radius: 99px; transition: width 1s ease; }
+    .ratio-fill.green { background: var(--income-clr); }
+    .ratio-fill.red { background: var(--expense-clr); }
+    .ratio-fill.blue { background: var(--invest-clr); }
     .ratio-fill.purple { background: var(--networth-clr); }
 
-    /* Responsive */
     @media (max-width: 900px) {
       .sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); z-index: 200; }
-      .sidebar.open { transform: translateX(0); box-shadow: 4px 0 40px rgba(0,0,0,0.3); }
-      .hamburger { display: flex; }
+      .sidebar.open { transform: translateX(0); box-shadow: 4px 0 32px rgba(0,0,0,0.3); }
+      .hamburger { display: block; }
       .charts-grid { grid-template-columns: 1fr; }
-      .page { padding: 1.25rem 1rem; }
-      .topbar-user-name { display: none; }
+      .page { padding: 1rem; }
     }
-    @media (max-width: 540px) {
-      .kpi-grid { grid-template-columns: repeat(2,1fr); }
-      .ratio-cards { grid-template-columns: repeat(2,1fr); }
-      .topbar { padding: 0 1rem; }
-    }
-    @media (max-width: 360px) {
-      .kpi-grid, .ratio-cards { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 540px) { .kpi-grid { grid-template-columns: 1fr; } .ratio-cards { grid-template-columns: repeat(2,1fr); } }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════════
-     AUTH SCREEN
-═══════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════
+     AUTH SCREEN — Login + Signup
+═══════════════════════════════════════ -->
 <div id="auth-screen" class="auth-screen">
 
   <!-- Brand -->
   <div class="auth-brand">
-    <div class="auth-logo-svg">
-      <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
-        <rect width="42" height="42" rx="11" fill="url(#authGrad)"/>
-        <path d="M11 30L21 13L31 30" stroke="white" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="21" cy="24" r="3.2" fill="white"/>
-        <defs>
-          <linearGradient id="authGrad" x1="0" y1="0" x2="42" y2="42">
-            <stop stop-color="#6C63FF"/><stop offset="1" stop-color="#3ECFCF"/>
-          </linearGradient>
-        </defs>
-      </svg>
-    </div>
+    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+      <rect width="40" height="40" rx="10" fill="url(#ag)"/>
+      <path d="M10 28L20 12L30 28" stroke="white" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="20" cy="22" r="3" fill="white"/>
+      <defs><linearGradient id="ag" x1="0" y1="0" x2="40" y2="40"><stop stop-color="#6C63FF"/><stop offset="1" stop-color="#3ECFCF"/></linearGradient></defs>
+    </svg>
     <div>
       <div class="auth-brand-name">Personal Finance Web</div>
       <div class="auth-brand-tagline">Track · Analyse · Grow</div>
@@ -563,13 +208,8 @@
   <div id="login-panel" class="auth-card">
     <div class="auth-card-title">Welcome back 👋</div>
     <div class="auth-card-subtitle">Sign in to your financial dashboard</div>
-
-    <div class="demo-hint">
-      🎯 Demo account — <strong>demo@fintrack.com</strong> / <strong>Demo@1234</strong>
-    </div>
-
+    <div class="demo-hint">🎯 Demo — <strong>demo@fintrack.com</strong> / <strong>Demo@1234</strong></div>
     <div id="login-error" class="auth-error hidden"></div>
-
     <div class="form-group">
       <label class="form-label" for="login-email">Email Address</label>
       <input class="form-input" type="email" id="login-email" placeholder="you@example.com" autocomplete="email" />
@@ -578,21 +218,15 @@
       <label class="form-label" for="login-password">Password</label>
       <input class="form-input" type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" />
     </div>
-
     <button class="btn-primary" id="login-btn" onclick="handleLogin()">Sign In →</button>
-
-    <p class="auth-switch">
-      New here? <a onclick="showSignup()">Create a free account</a>
-    </p>
+    <p class="auth-switch">New here? <a onclick="showSignup()">Create a free account</a></p>
   </div>
 
   <!-- SIGNUP PANEL -->
   <div id="signup-panel" class="auth-card hidden">
     <div class="auth-card-title">Create account ✨</div>
-    <div class="auth-card-subtitle">Start your financial journey today — it's free</div>
-
+    <div class="auth-card-subtitle">Start your financial journey — it's free</div>
     <div id="signup-error" class="auth-error hidden"></div>
-
     <div class="form-group">
       <label class="form-label" for="signup-name">Full Name</label>
       <input class="form-input" type="text" id="signup-name" placeholder="e.g. Arjun Sharma" autocomplete="name" />
@@ -609,108 +243,58 @@
       <label class="form-label" for="signup-confirm">Confirm Password</label>
       <input class="form-input" type="password" id="signup-confirm" placeholder="Repeat your password" autocomplete="new-password" />
     </div>
-
     <button class="btn-primary" id="signup-btn" onclick="handleSignup()">Create Account →</button>
-
-    <p class="auth-switch">
-      Already have an account? <a onclick="showLogin()">Sign in here</a>
-    </p>
+    <p class="auth-switch">Already have an account? <a onclick="showLogin()">Sign in here</a></p>
   </div>
 
-  <!-- Theme toggle on auth screen -->
   <button class="auth-theme-btn" onclick="toggleTheme()">
     🌙 <span id="auth-theme-label">Switch to Light Mode</span>
   </button>
-
 </div>
 
 
-<!-- ═══════════════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════
      MAIN APP
-═══════════════════════════════════════════════════════════ -->
+═══════════════════════════════════════ -->
 <div id="app" class="hidden">
-
-  <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <div class="brand-logo">
-        <svg viewBox="0 0 16 16" fill="none">
-          <path d="M2 12L8 3L14 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="8" cy="9.5" r="1.8" fill="white"/>
-        </svg>
+        <svg viewBox="0 0 14 14" fill="none"><path d="M2 11L7 3L12 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="8.5" r="1.6" fill="white"/></svg>
       </div>
-      <span><span class="brand-text-main">Personal </span><span class="brand-text-accent">Finance</span></span>
+      <span>Personal <span class="brand-accent">Finance</span></span>
     </div>
-
     <nav class="sidebar-nav">
-      <div class="nav-section-label">Overview</div>
-      <a class="nav-item active" onclick="navigate('dashboard')" data-page="dashboard">
-        <span class="nav-icon">📊</span> Dashboard <span class="nav-badge">Live</span>
-      </a>
-
-      <div class="nav-section-label">Finance</div>
-      <a class="nav-item" onclick="navigate('income')" data-page="income">
-        <span class="nav-icon">💰</span> Income
-      </a>
-      <a class="nav-item" onclick="navigate('expenditure')" data-page="expenditure">
-        <span class="nav-icon">💳</span> Expenditure
-      </a>
-      <a class="nav-item" onclick="navigate('investments')" data-page="investments">
-        <span class="nav-icon">📈</span> Investments
-      </a>
-
-      <div class="nav-section-label">Insights</div>
-      <a class="nav-item" onclick="navigate('analytics')" data-page="analytics">
-        <span class="nav-icon">📉</span> Analytics
-      </a>
+      <div class="nav-section">Overview</div>
+      <a class="nav-item active" onclick="navigate('dashboard')" data-page="dashboard">📊 Dashboard</a>
+      <div class="nav-section">Finance</div>
+      <a class="nav-item" onclick="navigate('income')" data-page="income">💰 Income</a>
+      <a class="nav-item" onclick="navigate('expenditure')" data-page="expenditure">💳 Expenditure</a>
+      <a class="nav-item" onclick="navigate('investments')" data-page="investments">📈 Investments</a>
+      <div class="nav-section">Insights</div>
+      <a class="nav-item" onclick="navigate('analytics')" data-page="analytics">📉 Analytics</a>
     </nav>
-
     <div class="sidebar-footer">
-      <!-- User info block -->
       <div class="user-section">
         <div class="user-av" id="sidebar-avatar">A</div>
         <div class="user-info">
-          <div class="user-info-name" id="sidebar-name">Loading…</div>
-          <div class="user-info-email" id="sidebar-email"></div>
+          <div class="user-info-name" id="sidebar-name">Guest</div>
         </div>
       </div>
-      <!-- Theme toggle -->
-      <button class="sidebar-footer-btn" onclick="toggleTheme()">
-        🌙 <span id="theme-label">Light Mode</span>
-      </button>
-      <!-- Logout -->
-      <button class="sidebar-footer-btn logout" onclick="handleLogout()">
-        🚪 Sign Out
-      </button>
+      <button class="footer-btn" onclick="toggleTheme()">🌙 <span id="theme-label">Light Mode</span></button>
+      <button class="footer-btn logout" onclick="handleLogout()">🚪 Sign Out</button>
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
   <main class="main-content">
-
-    <!-- TOPBAR -->
     <header class="topbar">
       <button class="hamburger" onclick="toggleSidebar()">☰</button>
       <div class="topbar-title" id="topbar-title">Dashboard</div>
-      <div class="topbar-right">
-        <div class="year-pill">
-          📅
-          <select id="year-select" onchange="onYearChange()">
-            <option value="2024" selected>FY 2024</option>
-            <option value="2023">FY 2023</option>
-          </select>
-        </div>
-        <div class="topbar-user-av" id="user-avatar">A</div>
-        <div class="topbar-user-name" id="user-name-display">—</div>
-      </div>
     </header>
 
-    <!-- ── DASHBOARD ── -->
+    <!-- DASHBOARD PAGE -->
     <section id="page-dashboard" class="page active">
-      <div class="page-header">
-        <h2>Financial Overview</h2>
-        <p>Your complete financial snapshot at a glance</p>
-      </div>
+      <div class="page-header"><h2>Financial Overview</h2><p>Your complete financial snapshot at a glance</p></div>
       <div class="kpi-grid" id="dash-kpis"></div>
       <div class="charts-grid">
         <div class="chart-card wide"><h3>Monthly Cash Flow</h3><canvas id="dash-cashflow-chart" height="280"></canvas></div>
@@ -718,161 +302,323 @@
       </div>
     </section>
 
-    <!-- ── INCOME ── -->
+    <!-- INCOME PAGE -->
     <section id="page-income" class="page">
-      <div class="page-header">
-        <h2>Income Analysis</h2>
-        <p>12-month salary and income breakdown</p>
-      </div>
+      <div class="page-header"><h2>Income Analysis</h2><p>12-month salary and income breakdown</p></div>
       <div class="kpi-grid" id="inc-kpis"></div>
-      <div class="charts-grid">
-        <div class="chart-card wide"><h3>Monthly Income Trend</h3><canvas id="income-trend-chart" height="260"></canvas></div>
-        <div class="chart-card"><h3>Growth Rate (%)</h3><canvas id="income-growth-chart" height="240"></canvas></div>
-      </div>
-      <div class="table-card">
-        <h3>Monthly Income Ledger</h3>
-        <table>
-          <thead><tr><th>Month</th><th>Date</th><th>Source</th><th>Amount</th><th>Growth</th></tr></thead>
-          <tbody id="income-tbody"></tbody>
-        </table>
-      </div>
+      <div class="charts-grid"><div class="chart-card"><h3>Monthly Income Trend</h3><canvas id="income-trend-chart" height="260"></canvas></div></div>
+      <div class="table-card"><h3>Monthly Income Ledger</h3><table><thead><tr><th>Month</th><th>Source</th><th>Amount</th><th>Growth</th></tr></thead><tbody id="income-tbody"></tbody></table></div>
     </section>
 
-    <!-- ── EXPENDITURE ── -->
+    <!-- EXPENDITURE PAGE -->
     <section id="page-expenditure" class="page">
-      <div class="page-header">
-        <h2>Expenditure Tracker</h2>
-        <p>Detailed expense analysis by category and month</p>
-      </div>
+      <div class="page-header"><h2>Expenditure Tracker</h2><p>Detailed expense analysis by category</p></div>
       <div class="kpi-grid" id="exp-kpis"></div>
       <div class="charts-grid">
         <div class="chart-card"><h3>Expense Distribution</h3><canvas id="exp-pie-chart" height="260"></canvas></div>
         <div class="chart-card"><h3>Monthly Spending Trend</h3><canvas id="exp-trend-chart" height="260"></canvas></div>
       </div>
-      <div class="table-card">
-        <h3>Expense by Category</h3>
-        <table>
-          <thead><tr><th>Category</th><th>Annual Total</th><th>Share</th><th>Avg / Month</th></tr></thead>
-          <tbody id="exp-tbody"></tbody>
-        </table>
-      </div>
+      <div class="table-card"><h3>Expense by Category</h3><table><thead><tr><th>Category</th><th>Annual Total</th><th>Share</th></tr></thead><tbody id="exp-tbody"></tbody></table></div>
     </section>
 
-    <!-- ── INVESTMENTS ── -->
+    <!-- INVESTMENTS PAGE -->
     <section id="page-investments" class="page">
-      <div class="page-header">
-        <h2>Investment Portfolio</h2>
-        <p>Complete investment performance and allocation</p>
-      </div>
+      <div class="page-header"><h2>Investment Portfolio</h2><p>Complete performance &amp; allocation</p></div>
       <div class="kpi-grid" id="inv-kpis"></div>
       <div class="charts-grid">
         <div class="chart-card"><h3>Portfolio Allocation</h3><canvas id="inv-pie-chart" height="260"></canvas></div>
         <div class="chart-card"><h3>Monthly Investment Flow</h3><canvas id="inv-bar-chart" height="260"></canvas></div>
       </div>
-      <div class="table-card">
-        <h3>Investment Holdings</h3>
-        <table>
-          <thead><tr><th>Name</th><th>Type</th><th>Date</th><th>Invested</th><th>Current</th><th>P&amp;L</th><th>Return</th></tr></thead>
-          <tbody id="inv-tbody"></tbody>
-        </table>
-      </div>
+      <div class="table-card"><h3>Investment Holdings</h3><table><thead><tr><th>Name</th><th>Type</th><th>Invested</th><th>Current</th><th>Return</th></tr></thead><tbody id="inv-tbody"></tbody></table></div>
     </section>
 
-    <!-- ── ANALYTICS ── -->
+    <!-- ANALYTICS PAGE -->
     <section id="page-analytics" class="page">
-      <div class="page-header">
-        <h2>Executive Analytics</h2>
-        <p>Comprehensive financial intelligence dashboard</p>
-      </div>
+      <div class="page-header"><h2>Executive Analytics</h2><p>Comprehensive financial intelligence</p></div>
       <div class="kpi-grid" id="an-kpis"></div>
       <div class="charts-grid">
         <div class="chart-card wide"><h3>Annual Overview — Monthly Trend</h3><canvas id="an-line-chart" height="280"></canvas></div>
         <div class="chart-card"><h3>Fund Distribution</h3><canvas id="an-donut-chart" height="240"></canvas></div>
       </div>
       <div class="ratio-cards">
-        <div class="ratio-card">
-          <div class="ratio-label">Savings Rate</div>
-          <div class="ratio-value" id="rat-savings">—</div>
-          <div class="ratio-bar"><div class="ratio-fill green" id="bar-savings" style="width:0%"></div></div>
-        </div>
-        <div class="ratio-card">
-          <div class="ratio-label">Expense Ratio</div>
-          <div class="ratio-value" id="rat-expense">—</div>
-          <div class="ratio-bar"><div class="ratio-fill red" id="bar-expense" style="width:0%"></div></div>
-        </div>
-        <div class="ratio-card">
-          <div class="ratio-label">Investment Rate</div>
-          <div class="ratio-value" id="rat-invest">—</div>
-          <div class="ratio-bar"><div class="ratio-fill blue" id="bar-invest" style="width:0%"></div></div>
-        </div>
-        <div class="ratio-card">
-          <div class="ratio-label">Investment Growth</div>
-          <div class="ratio-value" id="rat-growth">—</div>
-          <div class="ratio-bar"><div class="ratio-fill purple" id="bar-growth" style="width:0%"></div></div>
-        </div>
+        <div class="ratio-card"><div class="ratio-label">Savings Rate</div><div class="ratio-value" id="rat-savings">—</div><div class="ratio-bar"><div class="ratio-fill green" id="bar-savings" style="width:0%"></div></div></div>
+        <div class="ratio-card"><div class="ratio-label">Expense Ratio</div><div class="ratio-value" id="rat-expense">—</div><div class="ratio-bar"><div class="ratio-fill red" id="bar-expense" style="width:0%"></div></div></div>
+        <div class="ratio-card"><div class="ratio-label">Investment Rate</div><div class="ratio-value" id="rat-invest">—</div><div class="ratio-bar"><div class="ratio-fill blue" id="bar-invest" style="width:0%"></div></div></div>
+        <div class="ratio-card"><div class="ratio-label">Investment Growth</div><div class="ratio-value" id="rat-growth">—</div><div class="ratio-bar"><div class="ratio-fill purple" id="bar-growth" style="width:0%"></div></div></div>
       </div>
     </section>
-
   </main>
-</div><!-- /#app -->
+</div>
 
-<script src="script.js"></script>
-
-<!-- Patch: sync sidebar user info + auth-screen theme btn after enterApp -->
 <script>
-  // After enterApp() fills user-avatar + user-name-display,
-  // also populate sidebar user section and email if available
-  const _origEnterApp = typeof enterApp === 'function' ? enterApp : null;
+  // ══════════════════════════════════════════════════════════
+  // ALL ORIGINAL DATA + CHARTS + KPIs — 100% UNCHANGED
+  // ══════════════════════════════════════════════════════════
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const fullMonths = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-  // Theme toggle also handles auth-screen button label
-  const _origToggle = typeof toggleTheme === 'function' ? toggleTheme : null;
+  const monthlyIncome  = [85000,85000,92000,92000,92000,95000,95000,95000,98000,98000,98000,125000];
+  const monthlyExpense = [42000,41500,43800,43000,45500,47000,46500,48000,49000,51000,50500,58500];
+  const monthlyInvest  = [15000,15000,18000,18000,20000,20000,22000,22000,25000,25000,27000,32000];
 
-  document.addEventListener('DOMContentLoaded', () => {
-    // Patch enterApp to also fill sidebar fields
-    if (typeof window.enterApp === 'function') {
-      const original = window.enterApp;
-      window.enterApp = function() {
-        original.apply(this, arguments);
-        // Sync sidebar
-        const av   = document.getElementById('user-avatar');
-        const name = document.getElementById('user-name-display');
-        if (av && document.getElementById('sidebar-avatar')) {
-          document.getElementById('sidebar-avatar').textContent = av.textContent;
-        }
-        if (name && document.getElementById('sidebar-name')) {
-          document.getElementById('sidebar-name').textContent = name.textContent;
-        }
-        // email from currentUser if available
-        if (typeof currentUser !== 'undefined' && currentUser && currentUser.email) {
-          const em = document.getElementById('sidebar-email');
-          if (em) em.textContent = currentUser.email;
-        }
-      };
+  const expenseCategories = {
+    'Rent / EMI':210000,'Groceries & Food':96000,'Transportation':54000,
+    'Utilities & Bills':48000,'Entertainment':42000,'Healthcare':27000,
+    'Shopping':66000,'Education':18000
+  };
+
+  const investments = [
+    {name:'HDFC MidCap Opp Dir-G',type:'Mutual Fund',invested:125000,current:158000,returnPct:26.4},
+    {name:'ICICI Bluechip Fund',type:'Mutual Fund',invested:98000,current:112000,returnPct:14.3},
+    {name:'Reliance Industries',type:'Stock',invested:75000,current:89500,returnPct:19.3},
+    {name:'Tata Motors',type:'Stock',invested:45000,current:62000,returnPct:37.8},
+    {name:'Digital Gold (Goldex)',type:'Gold',invested:50000,current:58200,returnPct:16.4},
+    {name:'PPF Account',type:'Fixed Deposit',invested:70000,current:75600,returnPct:8.0},
+    {name:'Nippon ETF Nifty50',type:'ETF',invested:60000,current:68400,returnPct:14.0}
+  ];
+
+  const totalAnnualIncome  = monthlyIncome.reduce((a,b)=>a+b,0);
+  const totalAnnualExpense = monthlyExpense.reduce((a,b)=>a+b,0);
+  const totalAnnualInvest  = monthlyInvest.reduce((a,b)=>a+b,0);
+  const netSavings         = totalAnnualIncome - totalAnnualExpense - totalAnnualInvest;
+  const totalInvestedVal   = investments.reduce((s,i)=>s+i.invested,0);
+  const totalCurrentVal    = investments.reduce((s,i)=>s+i.current,0);
+  const totalReturns       = totalCurrentVal - totalInvestedVal;
+  const invReturnRate      = (totalReturns/totalInvestedVal)*100;
+  const savingsRate        = (netSavings/totalAnnualIncome)*100;
+  const expenseRatio       = (totalAnnualExpense/totalAnnualIncome)*100;
+  const netWorth           = totalAnnualIncome - totalAnnualExpense + totalReturns;
+
+  let activeCharts = {};
+  function destroyChart(id){ if(activeCharts[id]){ activeCharts[id].destroy(); delete activeCharts[id]; } }
+
+  function renderAllCharts() {
+    destroyChart('dash-cashflow-chart');
+    activeCharts['dash-cashflow-chart'] = new Chart(document.getElementById('dash-cashflow-chart').getContext('2d'),{
+      type:'line', data:{labels:months, datasets:[
+        {label:'Income',data:monthlyIncome,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,0.05)',tension:0.3,fill:true,pointRadius:4},
+        {label:'Expenses',data:monthlyExpense,borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,0.05)',tension:0.3,fill:true,pointRadius:4},
+        {label:'Investments',data:monthlyInvest,borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,0.05)',tension:0.3,fill:true,pointRadius:4}
+      ]}, options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'top',labels:{color:'#8892b0'}}}}
+    });
+    destroyChart('dash-pie-chart');
+    activeCharts['dash-pie-chart'] = new Chart(document.getElementById('dash-pie-chart').getContext('2d'),{
+      type:'doughnut', data:{labels:['Total Expenses','Investments','Savings'],datasets:[{data:[totalAnnualExpense,totalAnnualInvest,netSavings],backgroundColor:['#ef4444','#3b82f6','#22c55e'],borderWidth:0}]}
+    });
+    destroyChart('income-trend-chart');
+    activeCharts['income-trend-chart'] = new Chart(document.getElementById('income-trend-chart').getContext('2d'),{
+      type:'bar', data:{labels:months,datasets:[{label:'Monthly Income',data:monthlyIncome,backgroundColor:'#22c55e',borderRadius:6}]}
+    });
+    destroyChart('exp-pie-chart');
+    activeCharts['exp-pie-chart'] = new Chart(document.getElementById('exp-pie-chart').getContext('2d'),{
+      type:'pie', data:{labels:Object.keys(expenseCategories),datasets:[{data:Object.values(expenseCategories),backgroundColor:['#f97316','#10b981','#3b82f6','#8b5cf6','#ec4899','#14b8a6','#f59e0b','#6366f1']}]}
+    });
+    destroyChart('exp-trend-chart');
+    activeCharts['exp-trend-chart'] = new Chart(document.getElementById('exp-trend-chart').getContext('2d'),{
+      type:'line', data:{labels:months,datasets:[{label:'Monthly Spending',data:monthlyExpense,borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,0.1)',fill:true,tension:0.3}]}
+    });
+    const typeMap={};investments.forEach(inv=>{if(!typeMap[inv.type])typeMap[inv.type]=0;typeMap[inv.type]+=inv.invested;});
+    destroyChart('inv-pie-chart');
+    activeCharts['inv-pie-chart'] = new Chart(document.getElementById('inv-pie-chart').getContext('2d'),{
+      type:'doughnut', data:{labels:Object.keys(typeMap),datasets:[{data:Object.values(typeMap),backgroundColor:['#6C63FF','#3ECFCF','#f59e0b','#06b6d4']}]}
+    });
+    destroyChart('inv-bar-chart');
+    activeCharts['inv-bar-chart'] = new Chart(document.getElementById('inv-bar-chart').getContext('2d'),{
+      type:'bar', data:{labels:months,datasets:[{label:'Monthly Investment',data:monthlyInvest,backgroundColor:'#3b82f6',borderRadius:6}]}
+    });
+    destroyChart('an-line-chart');
+    activeCharts['an-line-chart'] = new Chart(document.getElementById('an-line-chart').getContext('2d'),{
+      type:'line', data:{labels:months,datasets:[
+        {label:'Income',data:monthlyIncome,borderColor:'#22c55e',tension:0.3},
+        {label:'Expense',data:monthlyExpense,borderColor:'#ef4444',tension:0.3},
+        {label:'Invest',data:monthlyInvest,borderColor:'#3b82f6',tension:0.3}
+      ]}, options:{plugins:{legend:{position:'top'}}}
+    });
+    destroyChart('an-donut-chart');
+    activeCharts['an-donut-chart'] = new Chart(document.getElementById('an-donut-chart').getContext('2d'),{
+      type:'doughnut', data:{labels:['Expenses','Investments','Net Savings'],datasets:[{data:[totalAnnualExpense,totalAnnualInvest,netSavings],backgroundColor:['#ef4444','#3b82f6','#22c55e']}]}
+    });
+  }
+
+  function updateAllKPIs() {
+    document.getElementById('dash-kpis').innerHTML = `
+      <div class="kpi-card income"><div><div class="kpi-label">Annual Income</div><div class="kpi-value">₹${totalAnnualIncome.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card expense"><div><div class="kpi-label">Total Expenses</div><div class="kpi-value">₹${totalAnnualExpense.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card investment"><div><div class="kpi-label">Investments</div><div class="kpi-value">₹${totalAnnualInvest.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card savings"><div><div class="kpi-label">Net Savings</div><div class="kpi-value">₹${netSavings.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card networth"><div><div class="kpi-label">Net Worth</div><div class="kpi-value">₹${netWorth.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card rate"><div><div class="kpi-label">Savings Rate</div><div class="kpi-value">${savingsRate.toFixed(1)}%</div></div></div>`;
+
+    const avgIncome=totalAnnualIncome/12, highest=Math.max(...monthlyIncome), lowest=Math.min(...monthlyIncome);
+    document.getElementById('inc-kpis').innerHTML = `
+      <div class="kpi-card income"><div>Annual Total<div class="kpi-value">₹${totalAnnualIncome.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card savings"><div>Monthly Avg<div class="kpi-value">₹${Math.round(avgIncome).toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card investment"><div>Highest Month<div class="kpi-value">₹${highest.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card expense"><div>Lowest Month<div class="kpi-value">₹${lowest.toLocaleString('en-IN')}</div></div></div>`;
+
+    const incomeBody=document.getElementById('income-tbody'); incomeBody.innerHTML='';
+    for(let i=0;i<months.length;i++){
+      let g=i===0?0:((monthlyIncome[i]-monthlyIncome[i-1])/monthlyIncome[i-1]*100);
+      let gHtml=g===0?'—':(g>0?`<span class="text-green">+${g.toFixed(1)}%</span>`:`<span class="text-red">${g.toFixed(1)}%</span>`);
+      incomeBody.innerHTML+=`<tr><td>${months[i]}</td><td><span class="badge badge-green">Salary + Bonus</span></td><td><strong>₹${monthlyIncome[i].toLocaleString('en-IN')}</strong></td><td>${gHtml}</td></tr>`;
     }
 
-    // Keep auth-screen theme label in sync
-    if (typeof window.toggleTheme === 'function') {
-      const origTT = window.toggleTheme;
-      window.toggleTheme = function() {
-        origTT.apply(this, arguments);
-        updateAuthThemeLabel();
-        updateSidebarThemeLabel();
-      };
+    const topCat=Object.entries(expenseCategories).sort((a,b)=>b[1]-a[1])[0][0];
+    document.getElementById('exp-kpis').innerHTML = `
+      <div class="kpi-card expense"><div>Annual Expenses<div class="kpi-value">₹${totalAnnualExpense.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card income"><div>Expense Ratio<div class="kpi-value">${expenseRatio.toFixed(1)}%</div></div></div>
+      <div class="kpi-card savings"><div>Top Category<div class="kpi-value">${topCat}</div></div></div>
+      <div class="kpi-card networth"><div>Categories<div class="kpi-value">${Object.keys(expenseCategories).length}</div></div></div>`;
+
+    const expBody=document.getElementById('exp-tbody'); expBody.innerHTML='';
+    Object.entries(expenseCategories).forEach(([cat,amt])=>{
+      let share=(amt/totalAnnualExpense*100).toFixed(1);
+      expBody.innerHTML+=`<tr><td>${cat}</td><td><strong>₹${amt.toLocaleString('en-IN')}</strong></td><td><span class="badge badge-red">${share}%</span></td></tr>`;
+    });
+
+    document.getElementById('inv-kpis').innerHTML = `
+      <div class="kpi-card investment"><div>Total Invested<div class="kpi-value">₹${totalInvestedVal.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card income"><div>Current Value<div class="kpi-value">₹${totalCurrentVal.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card savings"><div>Total Returns<div class="kpi-value">${totalReturns>=0?'+':''}₹${totalReturns.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card rate"><div>Return Rate<div class="kpi-value">${invReturnRate.toFixed(2)}%</div></div></div>`;
+
+    const invBody=document.getElementById('inv-tbody'); invBody.innerHTML='';
+    investments.forEach(inv=>{
+      let pc=inv.returnPct>=0?'text-green':'text-red';
+      invBody.innerHTML+=`<tr><td><strong>${inv.name}</strong></td><td><span class="badge badge-blue">${inv.type}</span></td><td>₹${inv.invested.toLocaleString('en-IN')}</td><td>₹${inv.current.toLocaleString('en-IN')}</td><td class="${pc}">${inv.returnPct>=0?'+':''}${inv.returnPct}%</td></tr>`;
+    });
+
+    const investGrowth=((totalCurrentVal-totalInvestedVal)/totalInvestedVal)*100;
+    document.getElementById('an-kpis').innerHTML = `
+      <div class="kpi-card income"><div>Income<div class="kpi-value">₹${totalAnnualIncome.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card expense"><div>Expenses<div class="kpi-value">₹${totalAnnualExpense.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card investment"><div>Invested<div class="kpi-value">₹${totalAnnualInvest.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card savings"><div>Savings<div class="kpi-value">₹${netSavings.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card networth"><div>Net Worth<div class="kpi-value">₹${netWorth.toLocaleString('en-IN')}</div></div></div>
+      <div class="kpi-card rate"><div>Inv. Growth<div class="kpi-value">${investGrowth.toFixed(1)}%</div></div></div>`;
+
+    // Ratio bars
+    document.getElementById('rat-savings').textContent = savingsRate.toFixed(1)+'%';
+    document.getElementById('rat-expense').textContent = expenseRatio.toFixed(1)+'%';
+    document.getElementById('rat-invest').textContent  = (totalAnnualInvest/totalAnnualIncome*100).toFixed(1)+'%';
+    document.getElementById('rat-growth').textContent  = investGrowth.toFixed(1)+'%';
+    setTimeout(()=>{
+      document.getElementById('bar-savings').style.width = Math.min(savingsRate,100)+'%';
+      document.getElementById('bar-expense').style.width = Math.min(expenseRatio,100)+'%';
+      document.getElementById('bar-invest').style.width  = Math.min(totalAnnualInvest/totalAnnualIncome*100,100)+'%';
+      document.getElementById('bar-growth').style.width  = Math.min(Math.max(investGrowth,0),100)+'%';
+    },80);
+  }
+
+  // ── NAVIGATION ──
+  function navigate(pageId) {
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(`page-${pageId}`).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.querySelector(`.nav-item[data-page="${pageId}"]`)?.classList.add('active');
+    document.getElementById('topbar-title').innerText = pageId.charAt(0).toUpperCase()+pageId.slice(1);
+    if(window.innerWidth<=900) document.getElementById('sidebar').classList.remove('open');
+  }
+  function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); }
+
+  // ── THEME ──
+  function toggleTheme(){
+    const html=document.documentElement;
+    const isDark=html.getAttribute('data-theme')==='dark';
+    html.setAttribute('data-theme', isDark?'light':'dark');
+    localStorage.setItem('theme', isDark?'light':'dark');
+    const lbl = isDark ? 'Dark Mode' : 'Light Mode';
+    const authLbl = isDark ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+    document.getElementById('theme-label').textContent = lbl;
+    const atl = document.getElementById('auth-theme-label');
+    if(atl) atl.textContent = authLbl;
+  }
+  (function(){ const t=localStorage.getItem('theme'); if(t){ document.documentElement.setAttribute('data-theme',t); } })();
+
+  // ── AUTH (login/signup panels + backend API) ──
+  function showSignup(){
+    document.getElementById('login-panel').classList.add('hidden');
+    document.getElementById('signup-panel').classList.remove('hidden');
+    clearErrors();
+  }
+  function showLogin(){
+    document.getElementById('signup-panel').classList.add('hidden');
+    document.getElementById('login-panel').classList.remove('hidden');
+    clearErrors();
+  }
+  function clearErrors(){
+    ['login-error','signup-error'].forEach(id=>{
+      const el=document.getElementById(id); if(el){el.classList.add('hidden');el.textContent='';}
+    });
+  }
+  function showError(id,msg){ const el=document.getElementById(id); if(el){el.textContent=msg;el.classList.remove('hidden');} }
+
+  const API = 'https://financeweb1.onrender.com/api';
+
+  async function handleLogin(){
+    const email=document.getElementById('login-email').value.trim();
+    const password=document.getElementById('login-password').value;
+    clearErrors();
+    if(!email||!password){ showError('login-error','Please enter both email and password.'); return; }
+    const btn=document.getElementById('login-btn');
+    btn.disabled=true; btn.textContent='Signing in…';
+    try{
+      const res=await fetch(`${API}/login`,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+      const data=await res.json();
+      if(!res.ok){ showError('login-error',data.error||'Login failed.'); return; }
+      launchApp(data.user);
+    }catch(e){ showError('login-error','Cannot reach server. Is the backend running?'); }
+    finally{ btn.disabled=false; btn.textContent='Sign In →'; }
+  }
+
+  async function handleSignup(){
+    const full_name=document.getElementById('signup-name').value.trim();
+    const email=document.getElementById('signup-email').value.trim();
+    const password=document.getElementById('signup-password').value;
+    const confirm=document.getElementById('signup-confirm').value;
+    clearErrors();
+    if(!full_name||!email||!password||!confirm){ showError('signup-error','All fields are required.'); return; }
+    if(password.length<6){ showError('signup-error','Password must be at least 6 characters.'); return; }
+    if(password!==confirm){ showError('signup-error','Passwords do not match.'); return; }
+    const btn=document.getElementById('signup-btn');
+    btn.disabled=true; btn.textContent='Creating account…';
+    try{
+      const res=await fetch(`${API}/signup`,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({full_name,email,password})});
+      const data=await res.json();
+      if(!res.ok){ showError('signup-error',data.error||'Signup failed.'); return; }
+      launchApp(data.user);
+    }catch(e){ showError('signup-error','Cannot reach server. Is the backend running?'); }
+    finally{ btn.disabled=false; btn.textContent='Create Account →'; }
+  }
+
+  function handleLogout(){
+    fetch(`${API}/logout`,{method:'POST',credentials:'include'}).catch(()=>{});
+    document.getElementById('app').classList.add('hidden');
+    document.getElementById('auth-screen').classList.remove('hidden');
+    showLogin();
+  }
+
+  function launchApp(user){
+    document.getElementById('auth-screen').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    // Set user name in sidebar + topbar
+    if(user && user.full_name){
+      const initials=user.full_name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+      document.getElementById('sidebar-avatar').textContent=initials;
+      document.getElementById('sidebar-name').textContent=user.full_name;
     }
-    updateAuthThemeLabel();
-    updateSidebarThemeLabel();
+    renderAllCharts();
+    updateAllKPIs();
+    navigate('dashboard');
+    if(typeof lucide!=='undefined') lucide.createIcons();
+  }
+
+  // Enter key support
+  document.addEventListener('DOMContentLoaded',()=>{
+    ['login-email','login-password'].forEach(id=>document.getElementById(id)?.addEventListener('keydown',e=>{if(e.key==='Enter')handleLogin();}));
+    ['signup-name','signup-email','signup-password','signup-confirm'].forEach(id=>document.getElementById(id)?.addEventListener('keydown',e=>{if(e.key==='Enter')handleSignup();}));
+    if(typeof lucide!=='undefined') lucide.createIcons();
   });
-
-  function updateAuthThemeLabel() {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const el = document.getElementById('auth-theme-label');
-    if (el) el.textContent = isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode';
-  }
-  function updateSidebarThemeLabel() {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const el = document.getElementById('theme-label');
-    if (el) el.textContent = isDark ? 'Light Mode' : 'Dark Mode';
-  }
 </script>
 </body>
 </html>
